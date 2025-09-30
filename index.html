@@ -3,322 +3,213 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Para Gaby — Mensaje y Foto</title>
+  <title>Para Gaby 💖</title>
 
   <!-- Tipografías -->
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Inter:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <style>
-    /* ===== Diseño móvil-first y mejores defaults ===== */
-    :root{
-      --ink:#1d1d1f; --muted:#6d6d72;
-      --accent:#ff5c8f;                 /* Rosa (default) */
+    :root {
+      --accent:#ff5c8f;
       --accent-2:#ffb0c8;
-      --radius:18px;
-      --glass: blur(10px) saturate(120%);
-      --gold1:#d4af37; --gold2:#f6e27a; --gold3:#c59c2a; --gold4:#fff1b5;
-      --shadow-1: 0 8px 24px rgba(0,0,0,.12);
-      --shadow-2: 0 16px 40px rgba(0,0,0,.18);
-      --wrap-max: 1100px;
+      --radius:16px;
     }
-    body[data-theme="lila"]{ --accent:#a46bff; --accent-2:#d8c4ff; }
-    body[data-theme="azul"]{ --accent:#3aa8ff; --accent-2:#bfe1ff; }
-    body[data-theme="dorado"]{ --accent:#e2b427; --accent-2:#ffe8a6; }
-
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0; color:var(--ink); background:#0b0b0b; font-family:'Inter',system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-      min-height:100svh; overflow-x:hidden;
-      padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);
-      -webkit-tap-highlight-color: transparent;
+    body {
+      margin:0;
+      font-family:'Inter',sans-serif;
+      background:#0b0b0b;
+      color:#222;
+      min-height:100svh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
 
-    /* ===== Fondo con video ===== */
-    .bg{ position:fixed; inset:0; z-index:-3; overflow:hidden; }
-    .bg video{
-      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
-      filter: brightness(.78) saturate(110%);
+    /* Fondo con video */
+    .bg {
+      position:fixed; inset:0; z-index:-1;
     }
-    .bg::after{
-      content:""; position:absolute; inset:0; z-index:1;
-      background:
-        radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--accent) 35%, transparent) 0%, transparent 60%),
-        radial-gradient(1200px 800px at 10% -10%, color-mix(in oklab, var(--accent) 25%, transparent) 0, transparent 60%),
-        radial-gradient(900px 700px at 110% 10%, color-mix(in oklab, var(--accent-2) 25%, transparent) 0, transparent 55%);
-      mix-blend-mode: screen; animation: latido 6s ease-in-out infinite;
+    .bg video {
+      width:100%; height:100%; object-fit:cover; filter:brightness(.75);
     }
-    @keyframes latido{0%,100%{opacity:.35;}50%{opacity:.65;}}
-
-    /* ===== Corazones ===== */
-    .hearts{ position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; transition:.3s opacity; }
-    .hearts.hide{ opacity:0; }
-    .heart{
-      position:absolute; width:var(--s,26px); height:var(--s,26px);
-      transform: rotate(45deg);
-      background: var(--accent);
-      border-radius:6px; opacity:.6;
-      filter: drop-shadow(0 3px 8px rgba(0,0,0,.25)) drop-shadow(0 0 14px color-mix(in oklab, var(--accent) 70%, transparent));
-      animation: fall linear infinite;
-    }
-    .heart::before, .heart::after{ content:""; position:absolute; width:var(--s,26px); height:var(--s,26px); background: var(--accent); border-radius:50%; }
-    .heart::before{ top:-50%; left:0; } .heart::after{ left:-50%; top:0; }
-    @keyframes fall{ 0%{ transform: translate3d(0,-10%,0) rotate(45deg);} 100%{ transform: translate3d(var(--dx,40px),110vh,0) rotate(45deg);} }
-
-    /* ===== Header ===== */
-    header{
-      position:relative; z-index:3; text-align:center;
-      padding: clamp(20px, 6svh, 40px) 16px 8px;
-      max-width:var(--wrap-max); margin:0 auto;
-    }
-    .title{
-      font-family:'Cormorant Garamond',serif; font-weight:700;
-      font-size: clamp(1.6rem, 7vw, 3rem); margin:0;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2) 50%, var(--accent));
-      background-size: 200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
-      animation: shimmer 8s linear infinite; text-shadow: 0 2px 14px rgba(255,255,255,.35);
-      line-height:1.15;
-    }
-    @keyframes shimmer{to{background-position:200% 0}}
-    .subtitle{
-      display:inline-block; font-family:'Cormorant Garamond',serif; font-style: italic; font-weight:600;
-      margin:.7rem auto 0; padding:10px 14px; color:#111; letter-spacing:.2px; font-size:clamp(.95rem, 3.8vw, 1.1rem);
-      background: rgba(255,255,255,.92); border: 1px solid rgba(255,255,255,.95);
-      border-radius:999px; backdrop-filter: blur(8px); box-shadow: 0 6px 16px rgba(0,0,0,.12);
-      max-width: min(92vw, 720px);
+    .bg::after {
+      content:""; position:absolute; inset:0;
+      background:radial-gradient(circle at 50% 50%, rgba(255,92,143,.3), transparent 70%);
     }
 
-    /* ===== Layout ===== */
-    .wrap{
-      max-width:var(--wrap-max); margin:18px auto clamp(60px,10svh,80px);
-      padding:0 clamp(12px, 3vw, 18px);
-      display:grid; gap:18px; grid-template-columns: 1fr;
+    /* Encabezado */
+    header {
+      text-align:center;
+      padding:24px 12px 12px;
     }
-    @media (min-width: 900px){
-      .wrap{ grid-template-columns: 1.2fr .8fr; gap:26px; align-items:stretch; }
-      .frame{ order:0; }
+    header h1 {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(1.5rem, 6vw, 2rem);
+      color:white;
+      margin:0;
     }
-    @media (max-width: 900px){ .frame{ order:-1; } } /* foto primero en móvil */
-
-    /* ===== Tarjeta del mensaje ===== */
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.97), rgba(255,255,255,.86));
-      backdrop-filter: var(--glass); border: 1px solid rgba(255,255,255,.92);
-      border-radius: var(--radius); padding: clamp(14px, 4.5vw, 26px); box-shadow: var(--shadow-1);
-      transform: translateY(16px); opacity:0; transition: .7s ease;
-    }
-    .card.reveal{ transform:none; opacity:1; }
-    .mensaje{
-      font-family:'Cormorant Garamond',serif; color:#151515;
-      font-weight:600; line-height:1.65; font-size: clamp(1.03rem, 4.2vw, 1.35rem);
-      position:relative; padding-left:24px; margin:0;
-    }
-    .mensaje strong{ letter-spacing:.4px; }
-    .mensaje::before{
-      content:"“"; position:absolute; left:0; top:-8px; font-size:2.1rem; color:var(--accent); opacity:.95; line-height:1;
-      text-shadow: 0 2px 12px color-mix(in oklab, var(--accent) 35%, transparent);
-    }
-    .firma{
-      display:inline-block; margin-top:16px;
-      color:color-mix(in oklab, var(--accent) 68%, #7a3a4e);
-      font-family:'Great Vibes',cursive; font-size:clamp(1.35rem, 6vw, 1.9rem);
-      white-space:nowrap; overflow:hidden; border-right:2px solid var(--accent);
-      width:0; animation: escribir 4.2s steps(36,end) forwards, parpadeo .9s infinite;
-    }
-    @keyframes escribir{ to{width:100%;} } @keyframes parpadeo{ 50%{border-color:transparent;} }
-    @media (max-width:600px){
-      .firma{ border-right:0; width:auto; animation: fadeIn .8s ease forwards; white-space:normal; }
-      @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+    header p {
+      font-size:clamp(.9rem, 4vw, 1rem);
+      background:rgba(255,255,255,.8);
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      margin-top:8px;
     }
 
-    /* ===== Marco de foto ===== */
-    .frame{ position:relative; display:flex; flex-direction:column; align-items:center; gap:8px; perspective:900px; }
-    .marco{
-      padding:10px; border-radius:16px;
-      background: conic-gradient(from 30deg, var(--gold4), var(--gold2) 20%, var(--gold1) 35%, var(--gold3) 55%, var(--gold2) 70%, var(--gold1) 85%, var(--gold4) 100%);
-      box-shadow: var(--shadow-2); position:relative; overflow:hidden; transform-style:preserve-3d; transition: transform .25s ease;
+    /* Foto */
+    .frame {
+      width:92%;
+      max-width:420px;
+      margin:20px auto;
     }
-    .marco::before{ content:""; position:absolute; top:0; left:-75%; width:50%; height:100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,.7), transparent); animation: shine 5s infinite; }
-    @keyframes shine{ 0%{left:-75%;} 50%{left:125%;} 100%{left:125%;} }
-    .pasp{ background: linear-gradient(180deg, #fff, #fbfbfb); border: 1px solid rgba(0,0,0,.06); padding: 10px; border-radius: 12px; box-shadow: inset 0 2px 6px rgba(0,0,0,.06); }
-    .photo{
-      width:min(92vw, 460px); aspect-ratio: 3 / 4; height:auto; object-fit: cover; display:block; border-radius: 10px; filter: saturate(110%);
-      background:#f5f5f5;
+    .frame img {
+      width:100%;
+      border-radius:12px;
+      display:block;
+      box-shadow:0 6px 16px rgba(0,0,0,.3);
+    }
+    figcaption {
+      text-align:center;
+      margin-top:8px;
+      background:rgba(255,255,255,.9);
+      padding:4px 10px;
+      border-radius:999px;
+      font-weight:600;
+      font-size:.95rem;
     }
 
-    /* Pie de foto legible */
-    figcaption{
-      display:inline-block; margin-top:6px; font-weight:700; letter-spacing:.3px; color:#111;
-      background: rgba(255,255,255,.94); border:1px solid rgba(255,255,255,.96);
-      padding:6px 14px; border-radius:999px; box-shadow: 0 6px 16px rgba(0,0,0,.12);
-      transform: translateY(16px); opacity:0; transition:.7s ease .1s; font-size: clamp(.95rem, 3.6vw, 1rem);
+    /* Mensaje */
+    .card {
+      width:92%;
+      max-width:500px;
+      margin:14px auto;
+      background:rgba(255,255,255,.92);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
     }
-    figcaption.reveal{ transform:none; opacity:1; }
+    .mensaje {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(1rem, 4vw, 1.25rem);
+      line-height:1.6;
+      margin:0;
+    }
+    .firma {
+      margin-top:14px;
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(1.2rem, 5vw, 1.6rem);
+      color:var(--accent);
+    }
 
-    /* ===== Footer + Spotify ===== */
-    footer{
-      text-align:center; color:#222; padding: 18px 12px calc(56px + env(safe-area-inset-bottom));
-      position:relative; z-index:2;
+    /* Spotify */
+    .spotify {
+      width:92%;
+      max-width:500px;
+      margin:20px auto;
+      background:rgba(255,255,255,.95);
+      border-radius:var(--radius);
+      padding:14px;
+      text-align:center;
     }
-    .spotify{
-      margin-top:18px; width:min(96vw, 640px); margin-inline:auto;
-      padding:14px; border-radius:18px; background: color-mix(in oklab, var(--accent) 10%, white);
-      box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 55%, transparent), 0 0 28px color-mix(in oklab, var(--accent) 35%, transparent);
-      animation: neonPulse 4s ease-in-out infinite;
+    .spotify h2 {
+      font-family:'Great Vibes',cursive;
+      margin:0 0 10px;
+      font-size:clamp(1.3rem, 5vw, 1.6rem);
+      color:var(--accent);
     }
-    @keyframes neonPulse{
-      0%,100%{ box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 55%, transparent), 0 0 28px color-mix(in oklab, var(--accent) 35%, transparent); }
-      50%{ box-shadow: 0 0 24px color-mix(in oklab, var(--accent) 85%, transparent), 0 0 44px color-mix(in oklab, var(--accent) 55%, transparent); }
+    .spotify iframe {
+      width:100%; height:220px;
+      border-radius:12px;
+      border:none;
     }
-    .spotify h2{ font-family:'Great Vibes',cursive; font-size:clamp(1.4rem, 6vw, 1.9rem); margin:0 0 10px; color:var(--accent); text-shadow: 0 2px 10px color-mix(in oklab, var(--accent) 50%, transparent); }
-    .spotify iframe{ border-radius:12px; width:100%; height: clamp(220px, 55vw, 320px); }
-    .btn{
-      display:inline-block; margin-top:10px; padding:12px 18px; border-radius:999px; font-weight:700; font-size:clamp(.95rem, 3.8vw, 1rem); text-decoration:none;
-      background: linear-gradient(180deg, #fff, var(--accent-2)); color:#551a2a;
-      box-shadow: 0 8px 20px color-mix(in oklab, var(--accent) 35%, transparent); transition: transform .15s ease, box-shadow .15s ease;
-      touch-action: manipulation;
+    .btn {
+      display:inline-block;
+      margin-top:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:600;
+      font-size:.95rem;
+      text-decoration:none;
+      background:linear-gradient(180deg, #fff, var(--accent-2));
+      color:#551a2a;
+      box-shadow:0 4px 12px rgba(0,0,0,.2);
     }
-    .btn:hover{ transform: translateY(-1px); box-shadow: 0 12px 26px color-mix(in oklab, var(--accent) 55%, transparent); }
 
-    /* ===== Botones flotantes ===== */
-    .fab{
-      position: fixed; top: max(12px, env(safe-area-inset-top)); right:12px; z-index:4; display:flex; gap:8px; align-items:center;
-      padding-right: env(safe-area-inset-right);
+    /* Footer */
+    footer {
+      text-align:center;
+      color:white;
+      font-size:.9rem;
+      margin:20px 0 70px;
     }
-    .chip{
-      appearance:none; border:none; cursor:pointer; padding:12px 14px; border-radius:999px; font-weight:700; font-size:clamp(.9rem, 3.6vw, .95rem);
-      background: linear-gradient(180deg, #fff, var(--accent-2)); color:#551a2a;
-      box-shadow: 0 8px 20px color-mix(in oklab, var(--accent) 35%, transparent); transition: transform .15s ease, box-shadow .15s ease, background .2s;
-    }
-    .chip:active{ transform: translateY(1px) scale(.98); }
-    .chip:hover{ transform: translateY(-1px); box-shadow: 0 12px 26px color-mix(in oklab, var(--accent) 55%, transparent); }
 
-    /* Accesibilidad: reducir animaciones si el usuario lo pide */
-    @media (prefers-reduced-motion: reduce){
-      .bg::after, .marco::before, .spotify{ animation:none !important; }
-      .heart{ animation-duration: 0s !important; }
+    /* Botones flotantes */
+    .fab {
+      position:fixed;
+      bottom:16px; right:16px;
+      display:flex; flex-direction:column; gap:10px;
+      z-index:10;
+    }
+    .chip {
+      border:none;
+      border-radius:999px;
+      padding:12px 16px;
+      font-weight:600;
+      background:linear-gradient(180deg, #fff, var(--accent-2));
+      color:#551a2a;
+      font-size:.9rem;
+      box-shadow:0 4px 12px rgba(0,0,0,.25);
     }
   </style>
 </head>
-<body data-theme="rosa">
-  <!-- ===== Fondo en video ===== -->
-  <div class="bg" aria-hidden="true">
+<body>
+  <!-- Fondo -->
+  <div class="bg">
     <video autoplay muted loop playsinline preload="auto" poster="imagenes/foto1.png">
       <source src="video/video1.mp4" type="video/mp4" />
     </video>
   </div>
 
-  <!-- ===== Corazones (generados por JS) ===== -->
-  <div class="hearts" id="hearts" aria-hidden="true"></div>
-
+  <!-- Encabezado -->
   <header>
-    <h1 class="title">Para mi niña — con todo mi amor</h1>
-    <p class="subtitle">Un mensaje de mi corazón y un rincón para nuestra foto favorita.</p>
+    <h1>Para mi niña 💕</h1>
+    <p>Un mensaje y un rincón para nuestra foto favorita.</p>
   </header>
 
-  <section class="wrap">
-    <!-- Foto primero en móvil -->
-    <figure class="frame sr" aria-label="Marco para nuestra foto">
-      <div class="marco" id="tilt">
-        <div class="pasp">
-          <img class="photo" src="imagenes/foto1.png" alt="Gaby y yo, nuestra foto favorita" loading="eager" decoding="async">
-        </div>
-      </div>
-      <figcaption id="caption">Gaby &amp; Brayan</figcaption>
-    </figure>
+  <!-- Foto -->
+  <figure class="frame">
+    <img src="imagenes/foto1.png" alt="Foto con Gaby">
+    <figcaption>Gaby &amp; Brayan</figcaption>
+  </figure>
 
-    <!-- Mensaje -->
-    <article class="card sr" aria-label="Mensaje para Gaby">
-      <p class="mensaje">
-        Mi Gaby, gracias por hacer que cada día se sienta como el mejor día de mi vida.
-        Quiero seguir escribiendo esta historia contigo, con paciencia, risas y un amor sincero.
-        Te amo y siempre será así: nunca me cansaré de enamorarte; jamás volveré a confiarme.
-        Siempre serás mi mujer y nunca me rendiré de luchar por nuestro amor. Te amo, mi niña guapa.
-        <br><br><strong>TE AMO, PRECIOSA</strong>
-      </p>
-      <p class="firma">— De mí, para ti 💗</p>
-    </article>
-  </section>
+  <!-- Mensaje -->
+  <article class="card">
+    <p class="mensaje">
+      Mi Gaby, gracias por hacer que cada día se sienta como el mejor día de mi vida.
+      Quiero seguir escribiendo esta historia contigo, con paciencia, risas y un amor sincero.
+      Te amo y siempre será así: nunca me cansaré de enamorarte; jamás volveré a confiarme.
+      Siempre serás mi mujer y nunca me rendiré de luchar por nuestro amor. Te amo, mi niña guapa.
+      <br><br><strong>TE AMO, PRECIOSA</strong>
+    </p>
+    <p class="firma">— De mí, para ti 💗</p>
+  </article>
 
-  <footer>
-    Hecho con 💗 para mi Gaby
-    <div class="spotify">
-      <h2>Nuestra playlist del amor 💖</h2>
-      <iframe
-        src="https://open.spotify.com/embed/playlist/6co4GiKxOGTxyYLkl0stn5?utm_source=generator"
-        frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy">
-      </iframe>
-      <a class="btn" href="https://open.spotify.com/playlist/6co4GiKxOGTxyYLkl0stn5" target="_blank" rel="noopener">Abrir en Spotify</a>
-    </div>
-  </footer>
-
-  <!-- ===== Botones flotantes ===== -->
-  <div class="fab" aria-label="Controles de apariencia">
-    <button class="chip" id="theme">🎨 Cambiar color</button>
-    <button class="chip" id="toggleHearts">✨ Corazones</button>
+  <!-- Spotify -->
+  <div class="spotify">
+    <h2>Nuestra playlist del amor 💖</h2>
+    <iframe src="https://open.spotify.com/embed/playlist/6co4GiKxOGTxyYLkl0stn5?utm_source=generator" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" loading="lazy"></iframe>
+    <a class="btn" href="https://open.spotify.com/playlist/6co4GiKxOGTxyYLkl0stn5" target="_blank">Abrir en Spotify</a>
   </div>
 
-  <script>
-    // Corazones: menos en móviles para rendimiento
-    (function(){
-      const cont = document.getElementById('hearts');
-      const isMobile = matchMedia('(max-width: 600px)').matches;
-      const N = isMobile ? 18 : 36;
-      for(let i=0;i<N;i++){
-        const h = document.createElement('span');
-        h.className = 'heart';
-        const size = (isMobile?16:18) + Math.random()*16;
-        const dur  = 11 + Math.random()*14;
-        const delay= -Math.random()*20;
-        const x    = Math.random()*100;
-        const drift= (Math.random()*160-80);
-        h.style.setProperty('--s', size+'px');
-        h.style.left = x+'%';
-        h.style.animationDuration = dur+'s';
-        h.style.animationDelay = delay+'s';
-        h.style.setProperty('--dx', drift+'px');
-        cont.appendChild(h);
-      }
-    })();
+  <!-- Footer -->
+  <footer>Hecho con 💗 para mi Gaby</footer>
 
-    // Scroll reveal
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
-          e.target.classList.add('reveal');
-          const fc=e.target.querySelector?.('figcaption'); if(fc) fc.classList.add('reveal');
-        }
-      });
-    },{ threshold:.2 });
-    document.querySelectorAll('.sr').forEach(el=> io.observe(el));
-
-    // Parallax tilt (solo si hay ratón/trackpad)
-    if (matchMedia('(pointer: fine)').matches) {
-      const tilt = document.getElementById('tilt');
-      const frame = document.querySelector('.frame');
-      frame.addEventListener('mousemove', (e)=>{
-        const r = frame.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - .5;
-        const y = (e.clientY - r.top) / r.height - .5;
-        tilt.style.transform = `rotateX(${-y*6}deg) rotateY(${x*6}deg) translateZ(0)`;
-      });
-      frame.addEventListener('mouseleave', ()=> tilt.style.transform = '');
-    }
-
-    // Cambiar tema
-    const themes = ['rosa','lila','azul','dorado'];
-    document.getElementById('theme').addEventListener('click', ()=>{
-      const b = document.body;
-      const i = themes.indexOf(b.dataset.theme || 'rosa');
-      b.dataset.theme = themes[(i+1)%themes.length];
-    });
-
-    // Mostrar/ocultar corazones
-    document.getElementById('toggleHearts').addEventListener('click', ()=>{
-      document.getElementById('hearts').classList.toggle('hide');
-    });
-  </script>
+  <!-- Botones flotantes -->
+  <div class="fab">
+    <button class="chip">🎨 Cambiar color</button>
+    <button class="chip">✨ Corazones</button>
+  </div>
 </body>
 </html>
