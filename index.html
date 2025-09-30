@@ -48,36 +48,22 @@
     @keyframes latido{0%,100%{opacity:.35;}50%{opacity:.65;}}
 
     /* ===== Corazones ===== */
-    .hearts{
-      position:fixed; inset:0; pointer-events:none; z-index:-1;
-      overflow:hidden; transition:.3s opacity;
-    }
+    .hearts{ position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; transition:.3s opacity; }
     .hearts.hide{ opacity:0; }
     .heart{
       position:absolute; width:var(--s,26px); height:var(--s,26px);
       transform: rotate(45deg);
       background: var(--accent);
       border-radius:6px; opacity:.65;
-      filter: drop-shadow(0 3px 8px rgba(0,0,0,.25))
-              drop-shadow(0 0 14px color-mix(in oklab, var(--accent) 70%, transparent));
+      filter: drop-shadow(0 3px 8px rgba(0,0,0,.25)) drop-shadow(0 0 14px color-mix(in oklab, var(--accent) 70%, transparent));
       animation: fall linear infinite;
     }
-    .heart::before, .heart::after{
-      content:""; position:absolute; width:var(--s,26px); height:var(--s,26px);
-      background: var(--accent); border-radius:50%;
-    }
-    .heart::before{ top:-50%; left:0; }
-    .heart::after{ left:-50%; top:0; }
-    @keyframes fall{
-      0%  { transform: translate3d(0,-10%,0) rotate(45deg); }
-      100%{ transform: translate3d(var(--dx,40px),110vh,0) rotate(45deg); }
-    }
+    .heart::before, .heart::after{ content:""; position:absolute; width:var(--s,26px); height:var(--s,26px); background: var(--accent); border-radius:50%; }
+    .heart::before{ top:-50%; left:0; } .heart::after{ left:-50%; top:0; }
+    @keyframes fall{ 0%{ transform: translate3d(0,-10%,0) rotate(45deg);} 100%{ transform: translate3d(var(--dx,40px),110vh,0) rotate(45deg);} }
 
     /* ===== Header ===== */
-    header{
-      position:relative; z-index:3; text-align:center;
-      padding:44px 18px 10px; max-width:1000px; margin:0 auto;
-    }
+    header{ position:relative; z-index:3; text-align:center; padding:40px 16px 8px; max-width:1000px; margin:0 auto; }
     .title{
       font-family:'Cormorant Garamond',serif; font-weight:700;
       font-size: clamp(1.8rem, 5.2vw, 3.2rem); margin:0;
@@ -95,17 +81,9 @@
     }
 
     /* ===== Layout ===== */
-    .wrap{
-      max-width:1100px; margin:22px auto 80px; padding:0 16px;
-      display:grid; gap:22px; grid-template-columns: 1fr;
-    }
-    @media (min-width: 900px){
-      .wrap{ grid-template-columns: 1.2fr .8fr; align-items:stretch; gap:26px; }
-    }
-    /* En móvil mostramos primero la foto y luego el texto */
-    @media (max-width: 900px){
-      .frame{ order:-1; }
-    }
+    .wrap{ max-width:1100px; margin:18px auto 76px; padding:0 14px; display:grid; gap:20px; grid-template-columns: 1fr; }
+    @media (min-width: 900px){ .wrap{ grid-template-columns: 1.2fr .8fr; align-items:stretch; gap:26px; } }
+    @media (max-width: 900px){ .frame{ order:-1; } } /* foto primero en móvil */
 
     /* ===== Tarjeta del mensaje ===== */
     .card{
@@ -117,15 +95,15 @@
     .card.reveal{ transform:none; opacity:1; }
     .mensaje{
       font-family:'Cormorant Garamond',serif; color:#151515;
-      font-weight:600; line-height:1.65; font-size: clamp(1.08rem, 4.2vw, 1.5rem);
+      font-weight:600; line-height:1.65; font-size: clamp(1.05rem, 4vw, 1.5rem);
       position:relative; padding-left:26px; margin:0;
     }
     .mensaje::before{
-      content:"“"; position:absolute; left:0; top:-8px;
-      font-size:2.2rem; color:var(--accent); opacity:.95; line-height:1;
+      content:"“"; position:absolute; left:0; top:-8px; font-size:2.2rem; color:var(--accent); opacity:.95; line-height:1;
       text-shadow: 0 2px 12px color-mix(in oklab, var(--accent) 35%, transparent);
     }
     .firma{
+      display:inline-block;
       margin-top:18px; color:color-mix(in oklab, var(--accent) 68%, #7a3a4e);
       font-family:'Great Vibes',cursive; font-size:clamp(1.4rem, 6vw, 2rem);
       white-space:nowrap; overflow:hidden; border-right:2px solid var(--accent);
@@ -133,96 +111,64 @@
     }
     @keyframes escribir{ to{width:100%;} } @keyframes parpadeo{ 50%{border-color:transparent;} }
 
+    /* En móviles quito el cursor para evitar la línea al borde */
+    @media (max-width:600px){
+      .firma{ border-right:0; width:auto; animation: fadeIn .8s ease forwards; white-space:normal; }
+      @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+    }
+
     /* ===== Marco de foto ===== */
-    .frame{ position:relative; display:flex; flex-direction:column; align-items:center; gap:10px; perspective:900px; }
+    .frame{ position:relative; display:flex; flex-direction:column; align-items:center; gap:8px; perspective:900px; }
     .marco{
       padding:12px; border-radius:16px;
       background: conic-gradient(from 30deg, var(--gold4), var(--gold2) 20%, var(--gold1) 35%, var(--gold3) 55%, var(--gold2) 70%, var(--gold1) 85%, var(--gold4) 100%);
       box-shadow: var(--shadow-2); position:relative; overflow:hidden;
       transform-style:preserve-3d; transition: transform .25s ease;
     }
-    .marco::before{
-      content:""; position:absolute; top:0; left:-75%; width:50%; height:100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,.7), transparent);
-      animation: shine 5s infinite;
-    }
+    .marco::before{ content:""; position:absolute; top:0; left:-75%; width:50%; height:100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,.7), transparent); animation: shine 5s infinite; }
     @keyframes shine{ 0%{left:-75%;} 50%{left:125%;} 100%{left:125%;} }
-    .pasp{
-      background: linear-gradient(180deg, #fff, #fbfbfb);
-      border: 1px solid rgba(0,0,0,.06);
-      padding: 10px; border-radius: 12px;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,.06);
-    }
-    /* Foto con relación 3/4 para que no se deforme en móvil */
-    .photo{
-      width:min(92vw, 440px);
-      aspect-ratio: 3 / 4;
-      height:auto;
-      object-fit: cover; display:block; border-radius: 10px; filter: saturate(110%);
-      background:#f5f5f5;
-    }
+    .pasp{ background: linear-gradient(180deg, #fff, #fbfbfb); border: 1px solid rgba(0,0,0,.06); padding: 10px; border-radius: 12px; box-shadow: inset 0 2px 6px rgba(0,0,0,.06); }
+    .photo{ width:min(92vw, 440px); aspect-ratio: 3 / 4; height:auto; object-fit: cover; display:block; border-radius: 10px; filter: saturate(110%); background:#f5f5f5; }
 
     /* Pie de foto legible */
     figcaption{
-      display:inline-block; margin-top:8px; font-weight:700; letter-spacing:.3px; color:#111;
+      display:inline-block; margin-top:6px; font-weight:700; letter-spacing:.3px; color:#111;
       background: rgba(255,255,255,.92); border:1px solid rgba(255,255,255,.95);
       padding:6px 14px; border-radius:999px; box-shadow: 0 6px 16px rgba(0,0,0,.12);
-      transform: translateY(16px); opacity:0; transition:.7s ease .1s;
-      font-size: clamp(.95rem, 3.8vw, 1rem);
+      transform: translateY(16px); opacity:0; transition:.7s ease .1s; font-size: clamp(.95rem, 3.8vw, 1rem);
     }
     figcaption.reveal{ transform:none; opacity:1; }
 
     /* ===== Footer + Spotify ===== */
-    footer{
-      text-align:center; color:#222; padding: 18px 12px calc(44px + env(safe-area-inset-bottom));
-      position:relative; z-index:2;
-    }
+    footer{ text-align:center; color:#222; padding: 18px 12px calc(56px + env(safe-area-inset-bottom)); position:relative; z-index:2; }
     .spotify{
       margin-top:18px; width:min(96vw, 600px); margin-left:auto; margin-right:auto;
-      padding:14px; border-radius:18px;
-      background: color-mix(in oklab, var(--accent) 10%, white);
-      box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 55%, transparent),
-                  0 0 28px color-mix(in oklab, var(--accent) 35%, transparent);
+      padding:14px; border-radius:18px; background: color-mix(in oklab, var(--accent) 10%, white);
+      box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 55%, transparent), 0 0 28px color-mix(in oklab, var(--accent) 35%, transparent);
       animation: neonPulse 4s ease-in-out infinite;
     }
     @keyframes neonPulse{
       0%,100%{ box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 55%, transparent), 0 0 28px color-mix(in oklab, var(--accent) 35%, transparent); }
       50%{ box-shadow: 0 0 24px color-mix(in oklab, var(--accent) 85%, transparent), 0 0 44px color-mix(in oklab, var(--accent) 55%, transparent); }
     }
-    .spotify h2{
-      font-family:'Great Vibes',cursive; font-size:clamp(1.5rem, 6vw, 2rem); margin:0 0 10px;
-      color:var(--accent); text-shadow: 0 2px 10px color-mix(in oklab, var(--accent) 50%, transparent);
-    }
+    .spotify h2{ font-family:'Great Vibes',cursive; font-size:clamp(1.5rem, 6vw, 2rem); margin:0 0 10px; color:var(--accent); text-shadow: 0 2px 10px color-mix(in oklab, var(--accent) 50%, transparent); }
     .spotify iframe{ border-radius:12px; width:100%; height:320px; }
     @media (max-width: 480px){ .spotify iframe{ height:260px; } }
-
-    /* Botón Abrir en Spotify */
     .btn{
-      display:inline-block; margin-top:10px; padding:10px 16px; border-radius:999px;
-      font-weight:700; font-size:.95rem; text-decoration:none;
-      background: linear-gradient(180deg, #fff, var(--accent-2));
-      color:#551a2a;
-      box-shadow: 0 8px 20px color-mix(in oklab, var(--accent) 35%, transparent);
-      transition: transform .15s ease, box-shadow .15s ease;
+      display:inline-block; margin-top:10px; padding:10px 16px; border-radius:999px; font-weight:700; font-size:.95rem; text-decoration:none;
+      background: linear-gradient(180deg, #fff, var(--accent-2)); color:#551a2a;
+      box-shadow: 0 8px 20px color-mix(in oklab, var(--accent) 35%, transparent); transition: transform .15s ease, box-shadow .15s ease;
     }
     .btn:hover{ transform: translateY(-1px); box-shadow: 0 12px 26px color-mix(in oklab, var(--accent) 55%, transparent); }
 
     /* ===== Botones flotantes ===== */
-    .fab{ position: fixed; right:14px; bottom:14px; z-index:4; display:flex; gap:10px; align-items:center; }
+    .fab{ position: fixed; top:12px; right:12px; z-index:4; display:flex; gap:8px; align-items:center; }
     .chip{
-      appearance:none; border:none; cursor:pointer;
-      padding:10px 14px; border-radius:999px; font-weight:700; font-size:.92rem;
-      background: linear-gradient(180deg, #fff, var(--accent-2));
-      color:#551a2a; box-shadow: 0 8px 20px color-mix(in oklab, var(--accent) 35%, transparent);
-      transition: transform .15s ease, box-shadow .15s ease, background .2s;
+      appearance:none; border:none; cursor:pointer; padding:10px 12px; border-radius:999px; font-weight:700; font-size:.9rem;
+      background: linear-gradient(180deg, #fff, var(--accent-2)); color:#551a2a;
+      box-shadow: 0 8px 20px color-mix(in oklab, var(--accent) 35%, transparent); transition: transform .15s ease, box-shadow .15s ease, background .2s;
     }
     .chip:hover{ transform: translateY(-1px); box-shadow: 0 12px 26px color-mix(in oklab, var(--accent) 55%, transparent); }
-
-    /* En móviles, centramos los chips y evitamos solaparlos con el contenido */
-    @media (max-width: 600px){
-      .fab{ left:50%; right:auto; bottom: calc(10px + env(safe-area-inset-bottom)); transform: translateX(-50%); gap:8px; }
-      .chip{ padding:9px 12px; font-size:.9rem; }
-    }
 
     @media (prefers-reduced-motion: reduce){
       .bg::after, .marco::before, .spotify{ animation:none !important; }
@@ -293,11 +239,11 @@
     (function(){
       const cont = document.getElementById('hearts');
       const isMobile = matchMedia('(max-width: 600px)').matches;
-      const N = isMobile ? 24 : 40; // cantidad
+      const N = isMobile ? 24 : 40;
       for(let i=0;i<N;i++){
         const h = document.createElement('span');
         h.className = 'heart';
-        const size = (isMobile?16:18) + Math.random()*18; // un poco más pequeños en móvil
+        const size = (isMobile?16:18) + Math.random()*18;
         const dur  = 10 + Math.random()*14;
         const delay= -Math.random()*20;
         const x    = Math.random()*100;
