@@ -9,32 +9,37 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Inter:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet" />
 
   <style>
+    /* ===== Diseño móvil-first y mejores defaults ===== */
     :root{
       --ink:#1d1d1f; --muted:#6d6d72;
-      --accent:#ff5c8f;           /* Rosa (default) */
+      --accent:#ff5c8f;                 /* Rosa (default) */
       --accent-2:#ffb0c8;
-      --radius:18px; --glass: blur(12px) saturate(120%);
+      --radius:18px;
+      --glass: blur(10px) saturate(120%);
       --gold1:#d4af37; --gold2:#f6e27a; --gold3:#c59c2a; --gold4:#fff1b5;
-      --shadow-1: 0 10px 30px rgba(0,0,0,.10);
-      --shadow-2: 0 18px 44px rgba(0,0,0,.18);
+      --shadow-1: 0 8px 24px rgba(0,0,0,.12);
+      --shadow-2: 0 16px 40px rgba(0,0,0,.18);
+      --wrap-max: 1100px;
     }
     body[data-theme="lila"]{ --accent:#a46bff; --accent-2:#d8c4ff; }
     body[data-theme="azul"]{ --accent:#3aa8ff; --accent-2:#bfe1ff; }
     body[data-theme="dorado"]{ --accent:#e2b427; --accent-2:#ffe8a6; }
 
-    *{box-sizing:border-box}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
-      margin:0; color:var(--ink);
-      font-family:'Inter',sans-serif;
-      min-height:100svh; overflow-x:hidden; background:#0b0b0b;
+      margin:0; color:var(--ink); background:#0b0b0b; font-family:'Inter',system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+      min-height:100svh; overflow-x:hidden;
       padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);
+      -webkit-tap-highlight-color: transparent;
     }
 
     /* ===== Fondo con video ===== */
     .bg{ position:fixed; inset:0; z-index:-3; overflow:hidden; }
     .bg video{
-      position:absolute; inset:0; width:100%; height:100%;
-      object-fit: cover; filter: brightness(.78) saturate(110%);
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+      filter: brightness(.78) saturate(110%);
     }
     .bg::after{
       content:""; position:absolute; inset:0; z-index:1;
@@ -42,8 +47,7 @@
         radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--accent) 35%, transparent) 0%, transparent 60%),
         radial-gradient(1200px 800px at 10% -10%, color-mix(in oklab, var(--accent) 25%, transparent) 0, transparent 60%),
         radial-gradient(900px 700px at 110% 10%, color-mix(in oklab, var(--accent-2) 25%, transparent) 0, transparent 55%);
-      mix-blend-mode: screen;
-      animation: latido 6s ease-in-out infinite;
+      mix-blend-mode: screen; animation: latido 6s ease-in-out infinite;
     }
     @keyframes latido{0%,100%{opacity:.35;}50%{opacity:.65;}}
 
@@ -54,7 +58,7 @@
       position:absolute; width:var(--s,26px); height:var(--s,26px);
       transform: rotate(45deg);
       background: var(--accent);
-      border-radius:6px; opacity:.65;
+      border-radius:6px; opacity:.6;
       filter: drop-shadow(0 3px 8px rgba(0,0,0,.25)) drop-shadow(0 0 14px color-mix(in oklab, var(--accent) 70%, transparent));
       animation: fall linear infinite;
     }
@@ -63,55 +67,66 @@
     @keyframes fall{ 0%{ transform: translate3d(0,-10%,0) rotate(45deg);} 100%{ transform: translate3d(var(--dx,40px),110vh,0) rotate(45deg);} }
 
     /* ===== Header ===== */
-    header{ position:relative; z-index:3; text-align:center; padding:40px 16px 8px; max-width:1000px; margin:0 auto; }
+    header{
+      position:relative; z-index:3; text-align:center;
+      padding: clamp(20px, 6svh, 40px) 16px 8px;
+      max-width:var(--wrap-max); margin:0 auto;
+    }
     .title{
       font-family:'Cormorant Garamond',serif; font-weight:700;
-      font-size: clamp(1.8rem, 5.2vw, 3.2rem); margin:0;
+      font-size: clamp(1.6rem, 7vw, 3rem); margin:0;
       background: linear-gradient(90deg, var(--accent), var(--accent-2) 50%, var(--accent));
       background-size: 200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
       animation: shimmer 8s linear infinite; text-shadow: 0 2px 14px rgba(255,255,255,.35);
+      line-height:1.15;
     }
     @keyframes shimmer{to{background-position:200% 0}}
     .subtitle{
       display:inline-block; font-family:'Cormorant Garamond',serif; font-style: italic; font-weight:600;
-      margin:.7rem auto 0; padding:10px 16px; color:#111; letter-spacing:.2px; font-size:clamp(1rem, 3.8vw, 1.1rem);
+      margin:.7rem auto 0; padding:10px 14px; color:#111; letter-spacing:.2px; font-size:clamp(.95rem, 3.8vw, 1.1rem);
       background: rgba(255,255,255,.92); border: 1px solid rgba(255,255,255,.95);
       border-radius:999px; backdrop-filter: blur(8px); box-shadow: 0 6px 16px rgba(0,0,0,.12);
       max-width: min(92vw, 720px);
     }
 
     /* ===== Layout ===== */
-    .wrap{ max-width:1100px; margin:18px auto 76px; padding:0 14px; display:grid; gap:20px; grid-template-columns: 1fr; }
-    @media (min-width: 900px){ .wrap{ grid-template-columns: 1.2fr .8fr; align-items:stretch; gap:26px; } }
+    .wrap{
+      max-width:var(--wrap-max); margin:18px auto clamp(60px,10svh,80px);
+      padding:0 clamp(12px, 3vw, 18px);
+      display:grid; gap:18px; grid-template-columns: 1fr;
+    }
+    @media (min-width: 900px){
+      .wrap{ grid-template-columns: 1.2fr .8fr; gap:26px; align-items:stretch; }
+      .frame{ order:0; }
+    }
     @media (max-width: 900px){ .frame{ order:-1; } } /* foto primero en móvil */
 
     /* ===== Tarjeta del mensaje ===== */
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.97), rgba(255,255,255,.82));
+      background: linear-gradient(180deg, rgba(255,255,255,.97), rgba(255,255,255,.86));
       backdrop-filter: var(--glass); border: 1px solid rgba(255,255,255,.92);
-      border-radius: var(--radius); padding: clamp(14px, 4vw, 28px); box-shadow: var(--shadow-1);
+      border-radius: var(--radius); padding: clamp(14px, 4.5vw, 26px); box-shadow: var(--shadow-1);
       transform: translateY(16px); opacity:0; transition: .7s ease;
     }
     .card.reveal{ transform:none; opacity:1; }
     .mensaje{
       font-family:'Cormorant Garamond',serif; color:#151515;
-      font-weight:600; line-height:1.65; font-size: clamp(1.05rem, 4vw, 1.5rem);
-      position:relative; padding-left:26px; margin:0;
+      font-weight:600; line-height:1.65; font-size: clamp(1.03rem, 4.2vw, 1.35rem);
+      position:relative; padding-left:24px; margin:0;
     }
+    .mensaje strong{ letter-spacing:.4px; }
     .mensaje::before{
-      content:"“"; position:absolute; left:0; top:-8px; font-size:2.2rem; color:var(--accent); opacity:.95; line-height:1;
+      content:"“"; position:absolute; left:0; top:-8px; font-size:2.1rem; color:var(--accent); opacity:.95; line-height:1;
       text-shadow: 0 2px 12px color-mix(in oklab, var(--accent) 35%, transparent);
     }
     .firma{
-      display:inline-block;
-      margin-top:18px; color:color-mix(in oklab, var(--accent) 68%, #7a3a4e);
-      font-family:'Great Vibes',cursive; font-size:clamp(1.4rem, 6vw, 2rem);
+      display:inline-block; margin-top:16px;
+      color:color-mix(in oklab, var(--accent) 68%, #7a3a4e);
+      font-family:'Great Vibes',cursive; font-size:clamp(1.35rem, 6vw, 1.9rem);
       white-space:nowrap; overflow:hidden; border-right:2px solid var(--accent);
-      width:0; animation: escribir 4.5s steps(36,end) forwards, parpadeo .8s infinite;
+      width:0; animation: escribir 4.2s steps(36,end) forwards, parpadeo .9s infinite;
     }
     @keyframes escribir{ to{width:100%;} } @keyframes parpadeo{ 50%{border-color:transparent;} }
-
-    /* En móviles quito el cursor para evitar la línea al borde */
     @media (max-width:600px){
       .firma{ border-right:0; width:auto; animation: fadeIn .8s ease forwards; white-space:normal; }
       @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
@@ -120,29 +135,34 @@
     /* ===== Marco de foto ===== */
     .frame{ position:relative; display:flex; flex-direction:column; align-items:center; gap:8px; perspective:900px; }
     .marco{
-      padding:12px; border-radius:16px;
+      padding:10px; border-radius:16px;
       background: conic-gradient(from 30deg, var(--gold4), var(--gold2) 20%, var(--gold1) 35%, var(--gold3) 55%, var(--gold2) 70%, var(--gold1) 85%, var(--gold4) 100%);
-      box-shadow: var(--shadow-2); position:relative; overflow:hidden;
-      transform-style:preserve-3d; transition: transform .25s ease;
+      box-shadow: var(--shadow-2); position:relative; overflow:hidden; transform-style:preserve-3d; transition: transform .25s ease;
     }
     .marco::before{ content:""; position:absolute; top:0; left:-75%; width:50%; height:100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,.7), transparent); animation: shine 5s infinite; }
     @keyframes shine{ 0%{left:-75%;} 50%{left:125%;} 100%{left:125%;} }
     .pasp{ background: linear-gradient(180deg, #fff, #fbfbfb); border: 1px solid rgba(0,0,0,.06); padding: 10px; border-radius: 12px; box-shadow: inset 0 2px 6px rgba(0,0,0,.06); }
-    .photo{ width:min(92vw, 440px); aspect-ratio: 3 / 4; height:auto; object-fit: cover; display:block; border-radius: 10px; filter: saturate(110%); background:#f5f5f5; }
+    .photo{
+      width:min(92vw, 460px); aspect-ratio: 3 / 4; height:auto; object-fit: cover; display:block; border-radius: 10px; filter: saturate(110%);
+      background:#f5f5f5;
+    }
 
     /* Pie de foto legible */
     figcaption{
       display:inline-block; margin-top:6px; font-weight:700; letter-spacing:.3px; color:#111;
-      background: rgba(255,255,255,.92); border:1px solid rgba(255,255,255,.95);
+      background: rgba(255,255,255,.94); border:1px solid rgba(255,255,255,.96);
       padding:6px 14px; border-radius:999px; box-shadow: 0 6px 16px rgba(0,0,0,.12);
-      transform: translateY(16px); opacity:0; transition:.7s ease .1s; font-size: clamp(.95rem, 3.8vw, 1rem);
+      transform: translateY(16px); opacity:0; transition:.7s ease .1s; font-size: clamp(.95rem, 3.6vw, 1rem);
     }
     figcaption.reveal{ transform:none; opacity:1; }
 
     /* ===== Footer + Spotify ===== */
-    footer{ text-align:center; color:#222; padding: 18px 12px calc(56px + env(safe-area-inset-bottom)); position:relative; z-index:2; }
+    footer{
+      text-align:center; color:#222; padding: 18px 12px calc(56px + env(safe-area-inset-bottom));
+      position:relative; z-index:2;
+    }
     .spotify{
-      margin-top:18px; width:min(96vw, 600px); margin-left:auto; margin-right:auto;
+      margin-top:18px; width:min(96vw, 640px); margin-inline:auto;
       padding:14px; border-radius:18px; background: color-mix(in oklab, var(--accent) 10%, white);
       box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 55%, transparent), 0 0 28px color-mix(in oklab, var(--accent) 35%, transparent);
       animation: neonPulse 4s ease-in-out infinite;
@@ -151,27 +171,33 @@
       0%,100%{ box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 55%, transparent), 0 0 28px color-mix(in oklab, var(--accent) 35%, transparent); }
       50%{ box-shadow: 0 0 24px color-mix(in oklab, var(--accent) 85%, transparent), 0 0 44px color-mix(in oklab, var(--accent) 55%, transparent); }
     }
-    .spotify h2{ font-family:'Great Vibes',cursive; font-size:clamp(1.5rem, 6vw, 2rem); margin:0 0 10px; color:var(--accent); text-shadow: 0 2px 10px color-mix(in oklab, var(--accent) 50%, transparent); }
-    .spotify iframe{ border-radius:12px; width:100%; height:320px; }
-    @media (max-width: 480px){ .spotify iframe{ height:260px; } }
+    .spotify h2{ font-family:'Great Vibes',cursive; font-size:clamp(1.4rem, 6vw, 1.9rem); margin:0 0 10px; color:var(--accent); text-shadow: 0 2px 10px color-mix(in oklab, var(--accent) 50%, transparent); }
+    .spotify iframe{ border-radius:12px; width:100%; height: clamp(220px, 55vw, 320px); }
     .btn{
-      display:inline-block; margin-top:10px; padding:10px 16px; border-radius:999px; font-weight:700; font-size:.95rem; text-decoration:none;
+      display:inline-block; margin-top:10px; padding:12px 18px; border-radius:999px; font-weight:700; font-size:clamp(.95rem, 3.8vw, 1rem); text-decoration:none;
       background: linear-gradient(180deg, #fff, var(--accent-2)); color:#551a2a;
       box-shadow: 0 8px 20px color-mix(in oklab, var(--accent) 35%, transparent); transition: transform .15s ease, box-shadow .15s ease;
+      touch-action: manipulation;
     }
     .btn:hover{ transform: translateY(-1px); box-shadow: 0 12px 26px color-mix(in oklab, var(--accent) 55%, transparent); }
 
     /* ===== Botones flotantes ===== */
-    .fab{ position: fixed; top:12px; right:12px; z-index:4; display:flex; gap:8px; align-items:center; }
+    .fab{
+      position: fixed; top: max(12px, env(safe-area-inset-top)); right:12px; z-index:4; display:flex; gap:8px; align-items:center;
+      padding-right: env(safe-area-inset-right);
+    }
     .chip{
-      appearance:none; border:none; cursor:pointer; padding:10px 12px; border-radius:999px; font-weight:700; font-size:.9rem;
+      appearance:none; border:none; cursor:pointer; padding:12px 14px; border-radius:999px; font-weight:700; font-size:clamp(.9rem, 3.6vw, .95rem);
       background: linear-gradient(180deg, #fff, var(--accent-2)); color:#551a2a;
       box-shadow: 0 8px 20px color-mix(in oklab, var(--accent) 35%, transparent); transition: transform .15s ease, box-shadow .15s ease, background .2s;
     }
+    .chip:active{ transform: translateY(1px) scale(.98); }
     .chip:hover{ transform: translateY(-1px); box-shadow: 0 12px 26px color-mix(in oklab, var(--accent) 55%, transparent); }
 
+    /* Accesibilidad: reducir animaciones si el usuario lo pide */
     @media (prefers-reduced-motion: reduce){
       .bg::after, .marco::before, .spotify{ animation:none !important; }
+      .heart{ animation-duration: 0s !important; }
     }
   </style>
 </head>
@@ -196,7 +222,7 @@
     <figure class="frame sr" aria-label="Marco para nuestra foto">
       <div class="marco" id="tilt">
         <div class="pasp">
-          <img class="photo" src="imagenes/foto1.png" alt="Gaby y yo, nuestra foto favorita">
+          <img class="photo" src="imagenes/foto1.png" alt="Gaby y yo, nuestra foto favorita" loading="eager" decoding="async">
         </div>
       </div>
       <figcaption id="caption">Gaby &amp; Brayan</figcaption>
@@ -219,10 +245,10 @@
     Hecho con 💗 para mi Gaby
     <div class="spotify">
       <h2>Nuestra playlist del amor 💖</h2>
-      <iframe data-testid="embed-iframe" style="border-radius:12px" 
-        src="https://open.spotify.com/embed/playlist/6co4GiKxOGTxyYLkl0stn5?utm_source=generator" 
-        width="100%" height="320" frameBorder="0" allowfullscreen=""
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy">
+      <iframe
+        src="https://open.spotify.com/embed/playlist/6co4GiKxOGTxyYLkl0stn5?utm_source=generator"
+        frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy">
       </iframe>
       <a class="btn" href="https://open.spotify.com/playlist/6co4GiKxOGTxyYLkl0stn5" target="_blank" rel="noopener">Abrir en Spotify</a>
     </div>
@@ -235,16 +261,16 @@
   </div>
 
   <script>
-    // Generar corazones (menos en móvil para rendimiento)
+    // Corazones: menos en móviles para rendimiento
     (function(){
       const cont = document.getElementById('hearts');
       const isMobile = matchMedia('(max-width: 600px)').matches;
-      const N = isMobile ? 24 : 40;
+      const N = isMobile ? 18 : 36;
       for(let i=0;i<N;i++){
         const h = document.createElement('span');
         h.className = 'heart';
-        const size = (isMobile?16:18) + Math.random()*18;
-        const dur  = 10 + Math.random()*14;
+        const size = (isMobile?16:18) + Math.random()*16;
+        const dur  = 11 + Math.random()*14;
         const delay= -Math.random()*20;
         const x    = Math.random()*100;
         const drift= (Math.random()*160-80);
