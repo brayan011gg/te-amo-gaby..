@@ -33,7 +33,7 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ===== Fondo con video ===== */
+    /* ===== Fondo con video (temas cambiables) ===== */
     .bg{ position:fixed; inset:0; z-index:-2; }
     .bg video{ width:100%; height:100%; object-fit:cover; filter:brightness(.75); }
     .bg::after{
@@ -127,21 +127,31 @@
     .cupon-modal{
       position:fixed; inset:0; display:none; place-items:center;
       background:rgba(0,0,0,.45); z-index:9999; padding:20px;
+      /* entrada / salida */
+      animation: fadeBg .25s ease both;
     }
     .cupon-modal.is-open{ display:grid; }
-    .cupon-dialog{
-  position:relative;
-  max-width:680px;
-  width:100%;
-  max-height: 90vh;        /* 👈 límite de alto a 90% de la pantalla */
-  overflow-y: auto;        /* 👈 scroll interno si se pasa del alto */
-  border-radius:24px;
-  background:#fff;
-  box-shadow:0 24px 64px rgba(0,0,0,.3);
-  border:1px solid var(--card-b);
-}
+    @keyframes fadeBg{ from{opacity:0} to{opacity:1} }
 
+    /* ✨ animación popIn del diálogo */
+    .cupon-dialog{
+      position:relative;
+      max-width:680px;
+      width:100%;
+      max-height:90vh;
+      overflow-y:auto;
+      border-radius:24px;
+      background:#fff;
+      box-shadow:0 24px 64px rgba(0,0,0,.3);
+      border:1px solid var(--card-b);
+      transform-origin:center;
+      animation: popIn .38s cubic-bezier(.2,.8,.2,1) both;
     }
+    @keyframes popIn{
+      0%{ transform:scale(.92) translateY(8px); opacity:0 }
+      100%{ transform:scale(1) translateY(0); opacity:1 }
+    }
+
     .cupon-close{
       position:absolute; margin:12px; right:8px; top:4px;
       border:none; background:transparent; font-size:28px; cursor:pointer; line-height:1;
@@ -180,11 +190,41 @@
     .cupon-date{ background:#fff; border:1px solid var(--card-b); border-radius:999px; padding:6px 10px; font-weight:600 }
     .cupon-serial{ margin-top:12px; font-family:ui-monospace,Menlo,Consolas,monospace; color:#7b5670 }
 
+    /* 🔒 panel de desbloqueo */
+    .unlock{
+      margin:14px 0; padding:14px; border-radius:14px;
+      background:linear-gradient(180deg,#fff,#fff7fb); border:1.5px dashed var(--chip-b);
+      display:flex; align-items:center; gap:12px;
+    }
+    .unlock-btn{
+      width:56px; height:56px; border-radius:50%; border:none; cursor:pointer;
+      background:radial-gradient(circle at 30% 30%, #ff9fc1, var(--accent));
+      position:relative; box-shadow:var(--glow);
+      display:grid; place-items:center;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{ transform:scale(1) } 50%{ transform:scale(1.06) }
+    }
+    .lock{
+      width:22px; height:18px; background:#fff; border-radius:4px; position:relative; box-shadow:inset 0 0 0 2px #cc6e9a;
+    }
+    .lock::before{
+      content:""; position:absolute; width:16px; height:14px; left:50%; top:-10px; transform:translateX(-50%);
+      border:2px solid #cc6e9a; border-bottom:none; border-radius:10px 10px 0 0; background:transparent;
+      transition: transform .35s ease;
+    }
+    .unlock-btn.open .lock::before{ transform:translateX(-50%) rotate(-35deg) translateX(4px); }
+    .unlock-note{ font-weight:700; color:#6f2346; }
+    .unlock-hint{ font-size:12px; color:#7b5670; margin-top:4px }
+
     .cupon-actions{ display:flex; gap:10px; padding:16px 24px 24px; flex-wrap:wrap; align-items:center }
     .cupon-primary{
       appearance:none; border:none; cursor:pointer; padding:12px 16px; border-radius:12px; font-weight:800;
       background:linear-gradient(90deg,#ff7ab3,#ffb567); color:var(--ink); box-shadow: var(--glow);
     }
+    .cupon-primary[disabled]{ opacity:.6; cursor:not-allowed }
+
     .cupon-primary.loading{ cursor:progress; opacity:.85 }
     .cupon-primary.loading::after{
       content:""; display:inline-block; width:1em; height:1em; margin-left:.6em; vertical-align:-.2em;
@@ -212,31 +252,41 @@
       border:none; border-radius:10px; padding:12px 14px; font-weight:800; cursor:pointer;
       background:linear-gradient(90deg,#ffdce9,#ffe9b9); color:#4b1533; box-shadow: var(--glow);
     }
+    .secret{ margin:.6rem 0 0; color:#7a4b67; font-size:.9rem; font-style:italic }
+
     @keyframes pop{
       0%{ transform:translateY(8px) scale(.98); opacity:0 }
       100%{ transform:translateY(0) scale(1); opacity:1 }
     }
 
-    /* ====== MEGA EXPLOSION DE CORAZONES ====== */
+    /* ====== EXPLOSIONES: corazones / confeti / pétalos ====== */
     .mega-burst{
       position:fixed; inset:0; pointer-events:none; z-index:10000; overflow:hidden;
       display:none;
     }
     .mega-burst.show{ display:block; }
-    .burst-heart{
-      position:absolute; width:12px; height:12px; transform: rotate(45deg);
-      background:var(--accent); border-radius:3px; opacity:0;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
-      animation: burst 1200ms ease-out forwards;
+    .burst-heart,.burst-confetti,.burst-petal{
+      position:absolute; opacity:0; animation: burst 1200ms ease-out forwards;
+      will-change: transform, opacity;
     }
-    .burst-heart::before,.burst-heart::after{
-      content:""; position:absolute; width:12px; height:12px; background:var(--accent); border-radius:50%;
-    }
+    /* corazones */
+    .burst-heart{ width:12px; height:12px; transform: rotate(45deg); background:var(--accent); border-radius:3px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+    .burst-heart::before,.burst-heart::after{ content:""; position:absolute; width:12px; height:12px; background:var(--accent); border-radius:50%; }
     .burst-heart::before{ top:-50%; left:0 } .burst-heart::after{ left:-50%; top:0 }
+    /* confeti pastel */
+    .burst-confetti{ width:8px; height:14px; background:#ffd8e8; box-shadow:0 0 0 1px rgba(0,0,0,.04) inset; border-radius:2px; }
+    .burst-confetti.c2{ background:#dff4ff } .burst-confetti.c3{ background:#eaf9df } .burst-confetti.c4{ background:#fff0cc }
+    /* pétalos sakura */
+    .burst-petal{
+      width:18px; height:12px; background:radial-gradient(60% 90% at 60% 40%, #ffe8f0 0%, #ffc1d7 60%, #ff9fbf 100%);
+      border-radius:18px 18px 18px 2px; transform:rotate(20deg);
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.15));
+    }
+
     @keyframes burst{
-      0%{ transform: translate(0,0) rotate(45deg) scale(.6); opacity:0 }
+      0%{ transform: translate(0,0) scale(.7); opacity:0 }
       10%{ opacity:1 }
-      100%{ transform: translate(var(--tx), var(--ty)) rotate(45deg) scale(1.1); opacity:0 }
+      100%{ transform: translate(var(--tx), var(--ty)) rotate(var(--rot,0deg)) scale(1); opacity:0 }
     }
 
     /* ===== Interfaz de compartir ===== */
@@ -268,6 +318,20 @@
       filter: drop-shadow(0 1px 0 rgba(0,0,0,.15));
     }
 
+    /* 🔘 WhatsApp fijo dentro del modal (siempre visible) */
+    .whats-fixed{
+      position:sticky; bottom:0; left:0; right:0;
+      background:linear-gradient(180deg,#ffffffE6,#fff);
+      display:flex; justify-content:center; padding:12px;
+      border-top:1px solid #efe2f2;
+      z-index:5;
+    }
+    .whats-fixed .whatsapp{
+      width:100%; max-width:520px;
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 16px; border-radius:14px;
+    }
+
     /* bloquear scroll cuando modal abierto */
     body.cupon-lock{ overflow:hidden }
   </style>
@@ -275,8 +339,8 @@
 <body data-theme="rosa">
   <!-- Fondo -->
   <div class="bg" aria-hidden="true">
-    <video autoplay muted loop playsinline preload="auto" poster="imagenes/foto1.png">
-      <source src="video/video1.mp4" type="video/mp4" />
+    <video id="bgVideo" autoplay muted loop playsinline preload="auto" poster="imagenes/foto1.png">
+      <source id="bgSrc" src="video/video1.mp4" type="video/mp4" />
     </video>
   </div>
 
@@ -326,7 +390,7 @@
 
   <!-- ===== Modal del cupon ===== -->
   <div id="cupon-modal" class="cupon-modal" role="dialog" aria-modal="true" aria-labelledby="cupon-title" aria-hidden="true">
-    <div class="cupon-dialog">
+    <div class="cupon-dialog" id="cuponDialog">
       <button class="cupon-close" type="button" aria-label="Cerrar">×</button>
 
       <header class="cupon-header">
@@ -350,6 +414,17 @@
 
         <div class="cupon-serial">Serie: MK-<span id="serie"></span></div>
 
+        <!-- 🔒 Desbloqueo -->
+        <div class="unlock" id="unlockPanel">
+          <button class="unlock-btn" id="unlockBtn" aria-label="Tocar para desbloquear">
+            <span class="lock" aria-hidden="true"></span>
+          </button>
+          <div>
+            <div class="unlock-note">Toca el candado para desbloquear el código 💝</div>
+            <div class="unlock-hint">Pequeño ritual secreto antes del canje 😉</div>
+          </div>
+        </div>
+
         <!-- Caja del codigo (aparece luego del canje) -->
         <div class="cupon-code" id="codeBox" aria-live="polite">
           <h3>Tu codigo secreto 💗</h3>
@@ -357,11 +432,13 @@
             <input class="code-input" id="codeText" readonly value="TeAmoDaMemiMAkiporfiTOnoTO" />
             <button class="copy-btn" id="copyCode" type="button">Copiar</button>
           </div>
+          <!-- frase secreta -->
+          <p class="secret" id="secretPhrase">“Cuando digo <b>maracuyá</b>, tú dices <b>makis</b>.” 🥭🍣 (solo nosotros entendemos) </p>
         </div>
       </section>
 
       <footer class="cupon-actions">
-        <button class="cupon-primary" type="button" id="btn-canjear">Canjear ahora</button>
+        <button class="cupon-primary" type="button" id="btn-canjear" disabled>Canjear ahora</button>
       </footer>
 
       <!-- Interfaz de compartir (aparece tras la explosion) -->
@@ -384,8 +461,22 @@
           <button class="share-btn ghost" id="backToCoupon">Volver al cupon</button>
         </div>
       </section>
+
+      <!-- barra fija de WhatsApp (siempre visible en el modal) -->
+      <div class="whats-fixed">
+        <button class="share-btn whatsapp" id="whatsFixed">
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <path fill="#fff" d="M19.59 17.83c-.29-.15-1.7-.84-1.96-.94-.26-.1-.45-.15-.64.15-.19.29-.74.94-.91 1.13-.17.19-.34.21-.63.08-.29-.15-1.23-.45-2.34-1.44-.86-.75-1.44-1.68-1.61-1.98-.17-.29-.02-.45.13-.6.13-.13.29-.34.45-.51.15-.17.19-.29.29-.49.1-.19.05-.36-.02-.51-.07-.15-.64-1.56-.88-2.13-.23-.56-.47-.48-.64-.48h-.55c-.19 0-.49.07-.75.36-.26.29-1 1-1 2.45 0 1.44 1.02 2.84 1.17 3.04.15.19 2 3.06 4.84 4.29.68.29 1.2.46 1.6.59.67.21 1.27.18 1.75.11.53-.08 1.7-.69 1.94-1.36.24-.67.24-1.25.17-1.36-.07-.11-.26-.18-.55-.33zM16.01 5.33c-5.88 0-10.67 4.78-10.67 10.66 0 1.88.5 3.66 1.38 5.2L5.33 26.67l5.6-1.47a10.64 10.64 0 0 0 5.08 1.29c5.87 0 10.66-4.78 10.66-10.66s-4.79-10.5-10.66-10.5zm0 19.2c-1.74 0-3.36-.46-4.77-1.28l-.34-.2-3.32.87.89-3.24-.22-.33a8.62 8.62 0 0 1-1.32-4.6c0-4.77 3.89-8.66 8.66-8.66s8.66 3.89 8.66 8.66-3.89 8.66-8.66 8.66z"/>
+          </svg>
+          Enviar por WhatsApp
+        </button>
+      </div>
     </div>
   </div>
+
+  <!-- 🎵 sonidos -->
+  <audio id="snd-pop" preload="auto" src="sonidos/pop.mp3"></audio>
+  <audio id="snd-sakura" preload="auto" src="sonidos/sakura.mp3"></audio>
 
   <script>
     // === Corazones de fondo ===
@@ -410,13 +501,24 @@
       }
     })();
 
-    // === Cambiar tema ===
+    // === Cambiar tema + fondo de video ===
     const themes = ['rosa','lila','azul','dorado'];
+    const videos = [
+      {src:'video/video1.mp4', poster:'imagenes/foto1.png'},
+      {src:'video/video2.mp4', poster:'imagenes/foto2.png'},
+      {src:'video/video3.mp4', poster:'imagenes/foto3.png'},
+      {src:'video/video4.mp4', poster:'imagenes/foto4.png'},
+    ];
+    let themeIdx = 0;
     document.getElementById('theme').addEventListener('click', ()=>{
+      themeIdx = (themeIdx + 1) % themes.length;
       const b = document.body;
-      const current = b.dataset.theme || 'rosa';
-      const i = themes.indexOf(current);
-      b.dataset.theme = themes[(i+1) % themes.length];
+      b.dataset.theme = themes[themeIdx];
+      const v = document.getElementById('bgVideo');
+      const s = document.getElementById('bgSrc');
+      const data = videos[themeIdx % videos.length];
+      s.src = data.src; v.poster = data.poster;
+      v.load(); v.play().catch(()=>{/* silencio si autoplay bloqueado */});
     });
 
     // === Mostrar/ocultar corazones ===
@@ -427,6 +529,7 @@
     // ========= Lógica del cupon + explosion + compartir =========
     (function(){
       const modal = document.getElementById('cupon-modal');
+      const dialog = document.getElementById('cuponDialog');
       const openBtn = document.getElementById('btn-cupon');
       const closeBtn = modal.querySelector('.cupon-close');
       const canjearBtn = document.getElementById('btn-canjear');
@@ -435,6 +538,11 @@
       const copyBtn = document.getElementById('copyCode');
       const body = document.getElementById('cuponBody');
       const mega = document.getElementById('megaBurst');
+      const secretPhrase = document.getElementById('secretPhrase');
+
+      // desbloqueo
+      const unlockPanel = document.getElementById('unlockPanel');
+      const unlockBtn = document.getElementById('unlockBtn');
 
       // share UI
       const shareScreen = document.getElementById('shareScreen');
@@ -442,6 +550,11 @@
       const shareCode = document.getElementById('shareCode');
       const backToCoupon = document.getElementById('backToCoupon');
       const shareWhats = document.getElementById('shareWhats');
+      const whatsFixed = document.getElementById('whatsFixed');
+
+      // sonidos
+      const sndPop = document.getElementById('snd-pop');
+      const sndSakura = document.getElementById('snd-sakura');
 
       function openModal(){
         modal.classList.add('is-open');
@@ -460,6 +573,15 @@
       closeBtn.addEventListener('click', closeModal);
       modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
       document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
+
+      // ===== Cerrar con swipe hacia abajo (móvil) =====
+      let startY = null, deltaY = 0;
+      dialog.addEventListener('touchstart', (e)=>{ startY = e.touches[0].clientY; deltaY = 0; }, {passive:true});
+      dialog.addEventListener('touchmove', (e)=>{ if(startY!==null) deltaY = e.touches[0].clientY - startY; }, {passive:true});
+      dialog.addEventListener('touchend', ()=>{
+        if(deltaY > 80) closeModal();
+        startY = null; deltaY = 0;
+      });
 
       // Fechas sin "ñ" (solo dentro del cupón)
       const fmt = new Intl.DateTimeFormat('es-PE', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
@@ -489,41 +611,80 @@
       copyBtn.addEventListener('click', ()=> copy(codeText, copyBtn));
       shareCopy.addEventListener('click', ()=> copy(shareCode, shareCopy));
 
-      // ===== Mega explosion (full screen) =====
+      // ===== Partículas alternadas =====
+      const types = ['hearts','confetti','petals'];
+      let lastType = -1;
+      function nextType(){
+        let t;
+        do{ t = Math.floor(Math.random()*types.length); }while(t===lastType);
+        lastType = t; return types[t];
+      }
+
       function megaExplosion(){
         mega.innerHTML = '';
         mega.classList.add('show');
         const W = window.innerWidth, H = window.innerHeight;
         const cx = W/2, cy = H/2;
-        const COUNT = 240;
+        const mode = nextType(); // 'hearts' | 'confetti' | 'petals'
+        const COUNT = mode==='confetti' ? 260 : 220;
 
         for(let i=0;i<COUNT;i++){
-          const h = document.createElement('span');
-          h.className = 'burst-heart';
-          h.style.left = cx + 'px';
-          h.style.top  = cy + 'px';
+          const el = document.createElement('span');
+          let cls = '';
+          if(mode==='hearts'){ cls = 'burst-heart'; }
+          else if(mode==='confetti'){
+            cls = 'burst-confetti';
+            if(i%4===1) el.classList.add('c2');
+            if(i%4===2) el.classList.add('c3');
+            if(i%4===3) el.classList.add('c4');
+          }else{ cls = 'burst-petal'; }
+          el.className = cls;
+          el.style.left = cx + 'px';
+          el.style.top  = cy + 'px';
 
           const angle = (Math.PI*2) * Math.random();
-          const dist  = 140 + Math.random()* (Math.max(W,H)*0.65);
+          const dist  = 120 + Math.random()* (Math.max(W,H)*0.7);
           const tx = Math.cos(angle) * dist;
           const ty = Math.sin(angle) * dist;
 
           const delay = Math.random()*120;
-          const size = 10 + Math.random()*18;
+          el.style.setProperty('--tx', tx+'px');
+          el.style.setProperty('--ty', ty+'px');
+          el.style.setProperty('--rot', (Math.random()*360)+'deg');
+          el.style.animationDelay = delay+'ms';
 
-          h.style.setProperty('--tx', tx+'px');
-          h.style.setProperty('--ty', ty+'px');
-          h.style.animationDelay = delay+'ms';
-          h.style.width = size+'px';
-          h.style.height = size+'px';
-
-          mega.appendChild(h);
+          if(mode==='confetti'){
+            el.style.width = (6 + Math.random()*6)+'px';
+            el.style.height = (10 + Math.random()*10)+'px';
+          }
+          if(mode==='petals'){
+            el.style.transform = `rotate(${(10+Math.random()*30)}deg)`;
+          }
+          mega.appendChild(el);
         }
         setTimeout(()=> mega.classList.remove('show'), 1400);
+
+        // sonido: pop (corazones/confeti) o sakura (pétalos)
+        try{
+          if(mode==='petals'){ sndSakura.currentTime=0; sndSakura.play(); }
+          else{ sndPop.currentTime=0; sndPop.play(); }
+        }catch(_){}
       }
+
+      // ===== Desbloqueo (candado/heart) =====
+      let unlocked = false;
+      unlockBtn.addEventListener('click', ()=>{
+        unlocked = true;
+        unlockBtn.classList.add('open');
+        unlockPanel.style.opacity = '0.65';
+        canjearBtn.removeAttribute('disabled');
+        // pequeño feedback sonoro
+        try{ sndPop.currentTime=0; sndPop.play(); }catch(_){}
+      });
 
       // ===== Canjear -> loading + explosion + codigo + compartir =====
       canjearBtn.addEventListener('click', ()=>{
+        if(!unlocked) return; // seguridad extra
         canjearBtn.disabled = true;
         canjearBtn.textContent = 'Espera bb (cargando)…';
         canjearBtn.classList.add('loading');
@@ -537,31 +698,34 @@
           setTimeout(()=>{
             shareScreen.classList.add('show');
             shareCode.value = codeText.value;
+            secretPhrase.style.display = 'block';
           }, 900);
-        }, 1100);
+        }, 900);
       });
 
-     // ===== Compartir (solo WhatsApp + volver) =====
-function buildText(){
-  return `🍣💖 CUPON DE AMOR 💖🍣
+      // ===== Compartir (WhatsApp + volver) =====
+      function buildText(){
+        return `🍣💖 CUPON DE AMOR 💖🍣
 
 Codigo secreto: ${shareCode.value}
 
 Dame mis makis bb 😘✨
 (porfi)`;
-}
-// Tu numero (sin el signo +)
-const phone = '51934574931';
+      }
+      // Tu numero (sin el signo +)
+      const phone = '51934574931';
 
-shareWhats.addEventListener('click', ()=>{
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(buildText())}`;
-  window.open(url, '_blank', 'noopener');
-});
+      function openWhats(){
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(buildText())}`;
+        window.open(url, '_blank', 'noopener');
+      }
+      shareWhats.addEventListener('click', openWhats);
+      whatsFixed.addEventListener('click', openWhats);
 
-backToCoupon.addEventListener('click', ()=>{
-  shareScreen.classList.remove('show');
-});
-})();
-</script>
+      backToCoupon.addEventListener('click', ()=>{
+        shareScreen.classList.remove('show');
+      });
+    })();
+  </script>
 </body>
 </html>
