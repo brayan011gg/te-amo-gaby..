@@ -130,10 +130,17 @@
     }
     .cupon-modal.is-open{ display:grid; }
     .cupon-dialog{
-      position:relative;
-      max-width:680px; width:100%; border-radius:24px; overflow:hidden;
-      background:#fff; box-shadow:0 24px 64px rgba(0,0,0,.3);
-      border:1px solid var(--card-b);
+  position:relative;
+  max-width:680px;
+  width:100%;
+  max-height: 90vh;        /* 👈 límite de alto a 90% de la pantalla */
+  overflow-y: auto;        /* 👈 scroll interno si se pasa del alto */
+  border-radius:24px;
+  background:#fff;
+  box-shadow:0 24px 64px rgba(0,0,0,.3);
+  border:1px solid var(--card-b);
+}
+
     }
     .cupon-close{
       position:absolute; margin:12px; right:8px; top:4px;
