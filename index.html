@@ -13,8 +13,14 @@
       /* tema por defecto (rosa) */
       --accent:#ff5c8f; --accent-2:#ffb0c8;
       --radius:16px;
+
+      /* cupon */
+      --ink:#3e1030;
+      --chip:#ffe6ee; --chip-b:#ffd3e3;
+      --panel:#fff6fb; --panel-b:#f6c0d6;
+      --card-b:#f0e2f5;
+      --glow:0 10px 30px rgba(255,92,143,.35);
     }
-    /* otros temas que se activan con data-theme en <body> */
     body[data-theme="lila"]{ --accent:#a46bff; --accent-2:#d8c4ff; }
     body[data-theme="azul"]{ --accent:#3aa8ff; --accent-2:#bfe1ff; }
     body[data-theme="dorado"]{ --accent:#e2b427; --accent-2:#ffe8a6; }
@@ -35,7 +41,7 @@
       background:radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--accent) 35%, transparent) 0%, transparent 70%);
     }
 
-    /* ===== Corazones ===== */
+    /* ===== Corazones decorativos del fondo ===== */
     .hearts{ position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; transition:.3s opacity; }
     .hearts.hide{ opacity:0; }
     .heart{
@@ -116,6 +122,147 @@
     @media (prefers-reduced-motion: reduce){
       .heart{ animation: none !important; }
     }
+
+    /* ========= CUPON (modal) ========= */
+    .cupon-modal{
+      position:fixed; inset:0; display:none; place-items:center;
+      background:rgba(0,0,0,.45); z-index:9999; padding:20px;
+    }
+    .cupon-modal.is-open{ display:grid; }
+    .cupon-dialog{
+      position:relative;
+      max-width:680px; width:100%; border-radius:24px; overflow:hidden;
+      background:#fff; box-shadow:0 24px 64px rgba(0,0,0,.3);
+      border:1px solid var(--card-b);
+    }
+    .cupon-close{
+      position:absolute; margin:12px; right:8px; top:4px;
+      border:none; background:transparent; font-size:28px; cursor:pointer; line-height:1;
+      color:#8a5a7b;
+    }
+    .cupon-header{
+      padding:28px 24px 10px;
+      background:linear-gradient(135deg,#fff 0%,#fff7ff 60%,#fff0f6 100%);
+    }
+    .cupon-chip{
+      display:inline-block; background:var(--chip); border:1px solid var(--chip-b); color:#6f2346;
+      font-weight:700; padding:6px 10px; border-radius:999px; font-size:12px; margin-bottom:8px;
+      box-shadow: var(--glow);
+    }
+    #cupon-title{
+      margin:0; font-size:32px; line-height:1.15;
+      background:linear-gradient(90deg,#ff6fa9,#ffb06a,#6fd49a);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 2px 0 rgba(255,255,255,.6);
+    }
+    .cupon-sub{ margin:6px 0 0; color:#6f4963; font-weight:700; letter-spacing:.2px }
+    .cupon-body{ padding:16px 24px; position:relative; overflow:hidden; }
+    .cupon-perks{
+      display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px; padding:0; margin:0 0 14px; list-style:none;
+    }
+    .cupon-perks li{
+      text-align:center; background:#f8fff9; border:1px solid #e0f3e5;
+      border-radius:12px; padding:10px 12px; font-size:14px;
+    }
+    .cupon-valid{
+      display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center;
+      padding:12px 14px; border:1.5px dashed var(--panel-b); border-radius:12px; background:var(--panel); font-size:14px
+    }
+    .cupon-tag{ font-weight:800; background:var(--chip); border:1px solid var(--chip-b); border-radius:8px; padding:6px 10px }
+    .cupon-date{ background:#fff; border:1px solid var(--card-b); border-radius:999px; padding:6px 10px; font-weight:600 }
+    .cupon-serial{ margin-top:12px; font-family:ui-monospace,Menlo,Consolas,monospace; color:#7b5670 }
+
+    .cupon-actions{ display:flex; gap:10px; padding:16px 24px 24px; flex-wrap:wrap; align-items:center }
+    .cupon-primary{
+      appearance:none; border:none; cursor:pointer; padding:12px 16px; border-radius:12px; font-weight:800;
+      background:linear-gradient(90deg,#ff7ab3,#ffb567); color:var(--ink); box-shadow: var(--glow);
+    }
+    .cupon-primary.loading{ cursor:progress; opacity:.85 }
+    .cupon-primary.loading::after{
+      content:""; display:inline-block; width:1em; height:1em; margin-left:.6em; vertical-align:-.2em;
+      border-radius:50%; border:2px solid rgba(0,0,0,.2); border-top-color:rgba(0,0,0,.6); animation: spin .9s linear infinite;
+    }
+    @keyframes spin{ to{ transform:rotate(1turn) } }
+
+    /* caja del codigo */
+    .cupon-code{
+      margin-top:14px; padding:14px; border-radius:14px;
+      background:linear-gradient(180deg,#fff, #fff7fb);
+      border:1.5px dashed var(--chip-b);
+      box-shadow: 0 10px 24px rgba(0,0,0,.08), var(--glow);
+      display:none;
+    }
+    .cupon-code.show{ display:block; animation: pop .45s ease both; }
+    .cupon-code h3{ margin:0 0 8px; font-size:1rem; color:#6f2346; }
+    .code-row{ display:flex; gap:10px; align-items:stretch; flex-wrap:wrap; }
+    .code-input{
+      flex:1; min-width:220px;
+      font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:800; letter-spacing:.5px;
+      border:1px solid var(--card-b); border-radius:10px; padding:12px; background:#fff; color:#2a0d1f;
+    }
+    .copy-btn{
+      border:none; border-radius:10px; padding:12px 14px; font-weight:800; cursor:pointer;
+      background:linear-gradient(90deg,#ffdce9,#ffe9b9); color:#4b1533; box-shadow: var(--glow);
+    }
+    @keyframes pop{
+      0%{ transform:translateY(8px) scale(.98); opacity:0 }
+      100%{ transform:translateY(0) scale(1); opacity:1 }
+    }
+
+    /* ====== MEGA EXPLOSION DE CORAZONES ====== */
+    .mega-burst{
+      position:fixed; inset:0; pointer-events:none; z-index:10000; overflow:hidden;
+      display:none;
+    }
+    .mega-burst.show{ display:block; }
+    .burst-heart{
+      position:absolute; width:12px; height:12px; transform: rotate(45deg);
+      background:var(--accent); border-radius:3px; opacity:0;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+      animation: burst 1200ms ease-out forwards;
+    }
+    .burst-heart::before,.burst-heart::after{
+      content:""; position:absolute; width:12px; height:12px; background:var(--accent); border-radius:50%;
+    }
+    .burst-heart::before{ top:-50%; left:0 } .burst-heart::after{ left:-50%; top:0 }
+    @keyframes burst{
+      0%{ transform: translate(0,0) rotate(45deg) scale(.6); opacity:0 }
+      10%{ opacity:1 }
+      100%{ transform: translate(var(--tx), var(--ty)) rotate(45deg) scale(1.1); opacity:0 }
+    }
+
+    /* ===== Interfaz de compartir ===== */
+    .share-screen{
+      display:none; padding:20px; text-align:center; border-top:1px solid var(--card-b);
+      background:linear-gradient(180deg,#fff,#fff8fc);
+    }
+    .share-screen.show{ display:block; animation: pop .45s ease both; }
+    .share-title{
+      font-weight:800; margin:0 0 8px; color:#4b1533;
+    }
+    .share-sub{ margin:0 0 14px; color:#6f4963; }
+    .share-actions{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center }
+
+    .share-btn{
+      border:none; border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer;
+      background:linear-gradient(90deg,#ff7ab3,#ffb567); color:#3e1030; box-shadow: var(--glow);
+    }
+    .share-btn.ghost{ background:#fff; border:1.5px solid #eee2f2; }
+
+    /* WhatsApp oficial (verde + logo) */
+    .share-btn.whatsapp{
+      display:inline-flex; align-items:center; gap:10px;
+      background:linear-gradient(90deg,#25D366,#128C7E);
+      color:#fff;
+    }
+    .share-btn.whatsapp svg{
+      width:20px; height:20px; flex:0 0 20px;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.15));
+    }
+
+    /* bloquear scroll cuando modal abierto */
+    body.cupon-lock{ overflow:hidden }
   </style>
 </head>
 <body data-theme="rosa">
@@ -163,10 +310,78 @@
   <div class="fab" aria-label="Controles">
     <button class="chip" id="theme">🎨 Cambiar color</button>
     <button class="chip" id="toggleHearts">✨ Corazones</button>
+    <!-- Botón del cupón -->
+    <button class="chip" id="btn-cupon" aria-haspopup="dialog" aria-controls="cupon-modal">🎫 Ver cupon de makis</button>
+  </div>
+
+  <!-- Overlay de mega explosion -->
+  <div class="mega-burst" id="megaBurst" aria-hidden="true"></div>
+
+  <!-- ===== Modal del cupon ===== -->
+  <div id="cupon-modal" class="cupon-modal" role="dialog" aria-modal="true" aria-labelledby="cupon-title" aria-hidden="true">
+    <div class="cupon-dialog">
+      <button class="cupon-close" type="button" aria-label="Cerrar">×</button>
+
+      <header class="cupon-header">
+        <span class="cupon-chip">Cupon de amor</span>
+        <h2 id="cupon-title">Cupon para unos makis de maracuya</h2>
+        <p class="cupon-sub">Valido hoy y manana</p>
+      </header>
+
+      <section class="cupon-body" id="cuponBody">
+        <ul class="cupon-perks">
+          <li>🍣 Makis</li>
+          <li>🫶 Mirada tierna incluida</li>
+          <li>💌 Abrazo extra</li>
+        </ul>
+
+        <div class="cupon-valid">
+          <span class="cupon-tag">Valido:</span>
+          <span class="cupon-date">Hoy: <strong id="hoy"></strong></span>
+          <span class="cupon-date">Manana: <strong id="manana"></strong></span>
+        </div>
+
+        <div class="cupon-serial">Serie: MK-<span id="serie"></span></div>
+
+        <!-- Caja del codigo (aparece luego del canje) -->
+        <div class="cupon-code" id="codeBox" aria-live="polite">
+          <h3>Tu codigo secreto 💗</h3>
+          <div class="code-row">
+            <input class="code-input" id="codeText" readonly value="TeAmoDaMemiMAkiporfiTOnoTO" />
+            <button class="copy-btn" id="copyCode" type="button">Copiar</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="cupon-actions">
+        <button class="cupon-primary" type="button" id="btn-canjear">Canjear ahora</button>
+      </footer>
+
+      <!-- Interfaz de compartir (aparece tras la explosion) -->
+      <section class="share-screen" id="shareScreen">
+        <h3 class="share-title">Manda este codigo a la persona que amas para que canjees tus makis</h3>
+        <p class="share-sub">Copia el codigo o envialo por WhatsApp 💞</p>
+        <div class="code-row" style="justify-content:center; margin-bottom:10px;">
+          <input class="code-input" id="shareCode" readonly value="TeAmoDaMemiMAkiporfiTOnoTO" />
+          <button class="copy-btn" id="shareCopy" type="button">Copiar</button>
+        </div>
+        <div class="share-actions">
+          <!-- Solo WhatsApp y Volver -->
+          <button class="share-btn whatsapp" id="shareWhats" aria-label="Compartir por WhatsApp">
+            <!-- Logo oficial (SVG) -->
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+              <path fill="#fff" d="M19.59 17.83c-.29-.15-1.7-.84-1.96-.94-.26-.1-.45-.15-.64.15-.19.29-.74.94-.91 1.13-.17.19-.34.21-.63.08-.29-.15-1.23-.45-2.34-1.44-.86-.75-1.44-1.68-1.61-1.98-.17-.29-.02-.45.13-.6.13-.13.29-.34.45-.51.15-.17.19-.29.29-.49.1-.19.05-.36-.02-.51-.07-.15-.64-1.56-.88-2.13-.23-.56-.47-.48-.64-.48h-.55c-.19 0-.49.07-.75.36-.26.29-1 1-1 2.45 0 1.44 1.02 2.84 1.17 3.04.15.19 2 3.06 4.84 4.29.68.29 1.2.46 1.6.59.67.21 1.27.18 1.75.11.53-.08 1.7-.69 1.94-1.36.24-.67.24-1.25.17-1.36-.07-.11-.26-.18-.55-.33zM16.01 5.33c-5.88 0-10.67 4.78-10.67 10.66 0 1.88.5 3.66 1.38 5.2L5.33 26.67l5.6-1.47a10.64 10.64 0 0 0 5.08 1.29c5.87 0 10.66-4.78 10.66-10.66s-4.79-10.5-10.66-10.5zm0 19.2c-1.74 0-3.36-.46-4.77-1.28l-.34-.2-3.32.87.89-3.24-.22-.33a8.62 8.62 0 0 1-1.32-4.6c0-4.77 3.89-8.66 8.66-8.66s8.66 3.89 8.66 8.66-3.89 8.66-8.66 8.66z"/>
+            </svg>
+            WhatsApp
+          </button>
+          <button class="share-btn ghost" id="backToCoupon">Volver al cupon</button>
+        </div>
+      </section>
+    </div>
   </div>
 
   <script>
-    // === Generar corazones ===
+    // === Corazones de fondo ===
     (function makeHearts(){
       const cont = document.getElementById('hearts');
       const isMobile = matchMedia('(max-width: 600px)').matches;
@@ -188,7 +403,7 @@
       }
     })();
 
-    // === Cambiar tema (cicla entre 4) ===
+    // === Cambiar tema ===
     const themes = ['rosa','lila','azul','dorado'];
     document.getElementById('theme').addEventListener('click', ()=>{
       const b = document.body;
@@ -201,6 +416,145 @@
     document.getElementById('toggleHearts').addEventListener('click', ()=>{
       document.getElementById('hearts').classList.toggle('hide');
     });
-  </script>
+
+    // ========= Lógica del cupon + explosion + compartir =========
+    (function(){
+      const modal = document.getElementById('cupon-modal');
+      const openBtn = document.getElementById('btn-cupon');
+      const closeBtn = modal.querySelector('.cupon-close');
+      const canjearBtn = document.getElementById('btn-canjear');
+      const codeBox = document.getElementById('codeBox');
+      const codeText = document.getElementById('codeText');
+      const copyBtn = document.getElementById('copyCode');
+      const body = document.getElementById('cuponBody');
+      const mega = document.getElementById('megaBurst');
+
+      // share UI
+      const shareScreen = document.getElementById('shareScreen');
+      const shareCopy = document.getElementById('shareCopy');
+      const shareCode = document.getElementById('shareCode');
+      const backToCoupon = document.getElementById('backToCoupon');
+      const shareWhats = document.getElementById('shareWhats');
+
+      function openModal(){
+        modal.classList.add('is-open');
+        document.body.classList.add('cupon-lock');
+        modal.setAttribute('aria-hidden','false');
+        canjearBtn.focus();
+      }
+      function closeModal(){
+        modal.classList.remove('is-open');
+        document.body.classList.remove('cupon-lock');
+        modal.setAttribute('aria-hidden','true');
+        openBtn.focus();
+      }
+
+      openBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modal.classList.contains('is-open')) closeModal(); });
+
+      // Fechas sin "ñ" (solo dentro del cupón)
+      const fmt = new Intl.DateTimeFormat('es-PE', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+      const now = new Date();
+      const manana = new Date(now); manana.setDate(now.getDate()+1);
+      const sinEnies = s => s.replaceAll('ñ','n').replaceAll('Ñ','N');
+      document.getElementById('hoy').textContent = sinEnies(fmt.format(now));
+      document.getElementById('manana').textContent = sinEnies(fmt.format(manana));
+
+      // Serie
+      const pad = n => String(n).padStart(2,'0');
+      const serial = now.getFullYear().toString().slice(-2)
+        + pad(now.getMonth()+1) + pad(now.getDate())
+        + '-' + pad(now.getHours()) + pad(now.getMinutes());
+      document.getElementById('serie').textContent = serial;
+
+      // Copiar
+      function copy(el, btn){
+        el.select?.(); el.setSelectionRange?.(0, 99999);
+        (async ()=>{
+          try{ await navigator.clipboard.writeText(el.value); }
+          catch{ document.execCommand && document.execCommand('copy'); }
+          btn.textContent = 'Copiado ✔';
+          setTimeout(()=> btn.textContent = 'Copiar', 1200);
+        })();
+      }
+      copyBtn.addEventListener('click', ()=> copy(codeText, copyBtn));
+      shareCopy.addEventListener('click', ()=> copy(shareCode, shareCopy));
+
+      // ===== Mega explosion (full screen) =====
+      function megaExplosion(){
+        mega.innerHTML = '';
+        mega.classList.add('show');
+        const W = window.innerWidth, H = window.innerHeight;
+        const cx = W/2, cy = H/2;
+        const COUNT = 240;
+
+        for(let i=0;i<COUNT;i++){
+          const h = document.createElement('span');
+          h.className = 'burst-heart';
+          h.style.left = cx + 'px';
+          h.style.top  = cy + 'px';
+
+          const angle = (Math.PI*2) * Math.random();
+          const dist  = 140 + Math.random()* (Math.max(W,H)*0.65);
+          const tx = Math.cos(angle) * dist;
+          const ty = Math.sin(angle) * dist;
+
+          const delay = Math.random()*120;
+          const size = 10 + Math.random()*18;
+
+          h.style.setProperty('--tx', tx+'px');
+          h.style.setProperty('--ty', ty+'px');
+          h.style.animationDelay = delay+'ms';
+          h.style.width = size+'px';
+          h.style.height = size+'px';
+
+          mega.appendChild(h);
+        }
+        setTimeout(()=> mega.classList.remove('show'), 1400);
+      }
+
+      // ===== Canjear -> loading + explosion + codigo + compartir =====
+      canjearBtn.addEventListener('click', ()=>{
+        canjearBtn.disabled = true;
+        canjearBtn.textContent = 'Espera bb (cargando)…';
+        canjearBtn.classList.add('loading');
+
+        setTimeout(()=>{
+          megaExplosion();
+          codeBox.classList.add('show');
+          canjearBtn.classList.remove('loading');
+          canjearBtn.textContent = 'Listo ❤️';
+
+          setTimeout(()=>{
+            shareScreen.classList.add('show');
+            shareCode.value = codeText.value;
+          }, 900);
+        }, 1100);
+      });
+
+     // ===== Compartir (solo WhatsApp + volver) =====
+function buildText(){
+  return `🍣💖 CUPON DE AMOR 💖🍣
+
+Codigo secreto: ${shareCode.value}
+
+Dame mis makis bb 😘✨
+(porfi)`;
+}
+// Tu numero (sin el signo +)
+const phone = '51934574931';
+
+shareWhats.addEventListener('click', ()=>{
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(buildText())}`;
+  window.open(url, '_blank', 'noopener');
+});
+
+backToCoupon.addEventListener('click', ()=>{
+  shareScreen.classList.remove('show');
+});
+})();
+</script>
 </body>
 </html>
