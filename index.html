@@ -127,7 +127,6 @@
     .cupon-modal{
       position:fixed; inset:0; display:none; place-items:center;
       background:rgba(0,0,0,.45); z-index:9999; padding:20px;
-      /* entrada / salida */
       animation: fadeBg .25s ease both;
     }
     .cupon-modal.is-open{ display:grid; }
@@ -332,8 +331,43 @@
       padding:12px 16px; border-radius:14px;
     }
 
-    /* bloquear scroll cuando modal abierto */
-    body.cupon-lock{ overflow:hidden }
+    /* ===== Mini modal: Términos y Condiciones ===== */
+    .terms-modal{
+      position:fixed; inset:0; display:none; place-items:center;
+      background:rgba(0,0,0,.45); z-index:10050; padding:20px;
+      animation: fadeBg .25s ease both;
+    }
+    .terms-modal.is-open{ display:grid; }
+
+    .terms-dialog{
+      width:100%; max-width:520px; background:#fff; border-radius:18px;
+      box-shadow:0 24px 64px rgba(0,0,0,.3); border:1px solid #efe2f2;
+      overflow:hidden; transform-origin:center; animation: popIn .3s ease both;
+    }
+    .terms-head{ padding:18px 20px; background:linear-gradient(135deg,#fff,#fff7ff); }
+    .terms-head h3{ margin:0; font-size:1.15rem; color:#5b2846; }
+    .terms-body{ padding:16px 20px; color:#6f4963; font-size:.95rem; }
+    .terms-actions{
+      display:flex; gap:8px; padding:14px; justify-content:flex-end; border-top:1px solid #efe2f2;
+      background:linear-gradient(180deg,#fff,#fff8fc);
+    }
+    .btn-ghost{
+      border:1px solid #e6d9ec; background:#fff; color:#5b2846; border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer;
+    }
+    .btn-primary{
+      border:none; background:linear-gradient(90deg,#ff7ab3,#ffb567); color:#3e1030; border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer; box-shadow: var(--glow);
+    }
+
+    /* Toast “solo será válido si son novios” */
+    .tnc-toast{
+      position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+      background:#3e1030; color:#fff; padding:10px 14px; border-radius:999px; font-weight:700;
+      box-shadow:0 8px 24px rgba(0,0,0,.25);
+      opacity:0; pointer-events:none; transition:.25s opacity, .25s transform;
+      z-index:11000;
+      white-space:nowrap;
+    }
+    .tnc-toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
   </style>
 </head>
 <body data-theme="rosa">
@@ -471,8 +505,32 @@
           Enviar por WhatsApp
         </button>
       </div>
+
+      <!-- ===== Mini modal de Términos y Condiciones (dentro del dialog) ===== -->
+      <div class="terms-modal" id="termsModal" aria-modal="true" role="dialog" aria-labelledby="termsTitle" aria-hidden="true">
+        <div class="terms-dialog" role="document">
+          <div class="terms-head">
+            <h3 id="termsTitle">Términos y Condiciones</h3>
+          </div>
+          <div class="terms-body">
+            <p>Antes de canjear tu cupón de amor, confirma que leíste los términos 💗.</p>
+            <button class="btn-ghost" id="seeTerms" type="button">Ver términos y condiciones</button>
+            <p style="margin-top:10px; font-size:.9rem; color:#7a4b67;">
+              Al aceptar, continuaremos con el canje (explosión de amor, código y todo 😉).
+            </p>
+          </div>
+          <div class="terms-actions">
+            <button class="btn-ghost" id="termsCancel" type="button">Cancelar</button>
+            <button class="btn-primary" id="termsAccept" type="button">Acepto y continuar</button>
+          </div>
+        </div>
+      </div>
+      <!-- / Mini modal -->
     </div>
   </div>
+
+  <!-- Toast -->
+  <div class="tnc-toast" id="tncToast">Solo será válido si son novios 💞</div>
 
   <!-- 🎵 sonidos -->
   <audio id="snd-pop" preload="auto" src="sonidos/pop.mp3"></audio>
@@ -555,6 +613,13 @@
       // sonidos
       const sndPop = document.getElementById('snd-pop');
       const sndSakura = document.getElementById('snd-sakura');
+
+      // Términos & toast
+      const termsModal = document.getElementById('termsModal');
+      const seeTerms = document.getElementById('seeTerms');
+      const termsCancel = document.getElementById('termsCancel');
+      const termsAccept = document.getElementById('termsAccept');
+      const tncToast = document.getElementById('tncToast');
 
       function openModal(){
         modal.classList.add('is-open');
@@ -682,9 +747,37 @@
         try{ sndPop.currentTime=0; sndPop.play(); }catch(_){}
       });
 
-      // ===== Canjear -> loading + explosion + codigo + compartir =====
-      canjearBtn.addEventListener('click', ()=>{
+      // ====== TÉRMINOS: abrir, ver mensaje y aceptar ======
+      function openTerms(){
+        termsModal.classList.add('is-open');
+        termsModal.setAttribute('aria-hidden','false');
+      }
+      function closeTerms(){
+        termsModal.classList.remove('is-open');
+        termsModal.setAttribute('aria-hidden','true');
+      }
+      // Ver términos -> muestra toast "Solo será válido si son novios"
+      seeTerms.addEventListener('click', ()=>{
+        tncToast.classList.add('show');
+        setTimeout(()=> tncToast.classList.remove('show'), 1800);
+      });
+      termsCancel.addEventListener('click', closeTerms);
+
+      // ===== Canjear -> primero muestra T&C; al aceptar continúa canje =====
+      let pendingCanje = false;
+
+      document.getElementById('btn-canjear').addEventListener('click', ()=>{
         if(!unlocked) return; // seguridad extra
+        pendingCanje = true;
+        openTerms(); // abrir términos antes de avanzar
+      });
+
+      // Aceptar términos: cerrar modal y continuar con el canje real
+      termsAccept.addEventListener('click', ()=>{
+        closeTerms();
+        if(!pendingCanje) return;
+        pendingCanje = false;
+
         canjearBtn.disabled = true;
         canjearBtn.textContent = 'Espera bb (cargando)…';
         canjearBtn.classList.add('loading');
@@ -701,6 +794,12 @@
             secretPhrase.style.display = 'block';
           }, 900);
         }, 900);
+      });
+
+      // Cerrar términos con click fuera o Escape
+      termsModal.addEventListener('click', (e)=>{ if(e.target === termsModal) closeTerms(); });
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape' && termsModal.classList.contains('is-open')) closeTerms();
       });
 
       // ===== Compartir (WhatsApp + volver) =====
