@@ -1,4 +1,3 @@
-este 
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -369,6 +368,24 @@ este
       white-space:nowrap;
     }
     .tnc-toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
+
+    /* ===== MODAL AGOTADO ===== */
+    .soldout-modal{
+      position:fixed; inset:0; display:none; place-items:center;
+      background:rgba(0,0,0,.55); z-index:11050; animation: fadeBg .25s ease both;
+    }
+    .soldout-modal.is-open{ display:grid; }
+    .soldout-card{
+      background:#fff; border-radius:16px; padding:22px; max-width:420px; width:92%;
+      text-align:center; box-shadow:0 24px 64px rgba(0,0,0,.35); border:1px solid #efe2f2;
+      animation: popIn .3s ease both;
+    }
+    .soldout-title{ margin:0 0 6px; font-weight:900; font-size:1.25rem; color:#8a123f; }
+    .soldout-sub{ margin:0; color:#6f4963; }
+    .soldout-btn{
+      margin-top:12px; border:none; padding:10px 14px; border-radius:12px; font-weight:800;
+      background:linear-gradient(90deg,#ff7ab3,#ffb567); color:#3e1030; cursor:pointer; box-shadow: var(--glow);
+    }
   </style>
 </head>
 <body data-theme="rosa">
@@ -423,7 +440,7 @@ este
   <!-- Overlay de mega explosion -->
   <div class="mega-burst" id="megaBurst" aria-hidden="true"></div>
 
-  <!-- ===== Modal del cupon ===== -->
+  <!-- ===== Modal del cupon (queda intacto, pero no se abre si está agotado) ===== -->
   <div id="cupon-modal" class="cupon-modal" role="dialog" aria-modal="true" aria-labelledby="cupon-title" aria-hidden="true">
     <div class="cupon-dialog" id="cuponDialog">
       <button class="cupon-close" type="button" aria-label="Cerrar">×</button>
@@ -467,7 +484,6 @@ este
             <input class="code-input" id="codeText" readonly value="TeAmoDaMemiMAkiporfiTOnoTO" />
             <button class="copy-btn" id="copyCode" type="button">Copiar</button>
           </div>
-          <!-- frase secreta -->
           <p class="secret" id="secretPhrase">“Cuando digo <b>maracuyá</b>, tú dices <b>makis</b>.” 🥭🍣 (solo nosotros entendemos) </p>
         </div>
       </section>
@@ -485,11 +501,9 @@ este
           <button class="copy-btn" id="shareCopy" type="button">Copiar</button>
         </div>
         <div class="share-actions">
-          <!-- Solo WhatsApp y Volver -->
           <button class="share-btn whatsapp" id="shareWhats" aria-label="Compartir por WhatsApp">
-            <!-- Logo oficial (SVG) -->
             <svg viewBox="0 0 32 32" aria-hidden="true">
-              <path fill="#fff" d="M19.59 17.83c-.29-.15-1.7-.84-1.96-.94-.26-.1-.45-.15-.64.15-.19.29-.74.94-.91 1.13-.17.19-.34.21-.63.08-.29-.15-1.23-.45-2.34-1.44-.86-.75-1.44-1.68-1.61-1.98-.17-.29-.02-.45.13-.6.13-.13.29-.34.45-.51.15-.17.19-.29.29-.49.1-.19.05-.36-.02-.51-.07-.15-.64-1.56-.88-2.13-.23-.56-.47-.48-.64-.48h-.55c-.19 0-.49.07-.75.36-.26.29-1 1-1 2.45 0 1.44 1.02 2.84 1.17 3.04.15.19 2 3.06 4.84 4.29.68.29 1.2.46 1.6.59.67.21 1.27.18 1.75.11.53-.08 1.7-.69 1.94-1.36.24-.67.24-1.25.17-1.36-.07-.11-.26-.18-.55-.33zM16.01 5.33c-5.88 0-10.67 4.78-10.67 10.66 0 1.88.5 3.66 1.38 5.2L5.33 26.67l5.6-1.47a10.64 10.64 0 0 0 5.08 1.29c5.87 0 10.66-4.78 10.66-10.66s-4.79-10.5-10.66-10.5zm0 19.2c-1.74 0-3.36-.46-4.77-1.28l-.34-.2-3.32.87.89-3.24-.22-.33a8.62 8.62 0 0 1-1.32-4.6c0-4.77 3.89-8.66 8.66-8.66s8.66 3.89 8.66 8.66-3.89 8.66-8.66 8.66z"/>
+              <path fill="#fff" d="M19.59 17.83c-.29-.15-1.7-.84-1.96-.94-.26-.1-.45-.15-.64.15-.19.29-.74.94-.91 1.13-.17.19-.34.21-.63.08-.29-.15-1.23-.45-2.34-1.44-.86-.75-1.44-1.68-1.61-1.98-.17-.29-.02-.45.13-.6.13-.13.29-.34.45-.51.15-.17.19-.29.29-.49.1-.19.05-.36-.02-.51-.07-.15-.64-1.56-.88-2.13-.23-.56-.47-.48-.64-.48h-.55c-.19 0 -.49.07-.75.36-.26.29-1 1-1 2.45 0 1.44 1.02 2.84 1.17 3.04.15.19 2 3.06 4.84 4.29.68.29 1.2.46 1.6.59.67.21 1.27.18 1.75.11.53-.08 1.7-.69 1.94-1.36.24-.67.24-1.25.17-1.36-.07-.11-.26-.18-.55-.33zM16.01 5.33c-5.88 0-10.67 4.78-10.67 10.66 0 1.88.5 3.66 1.38 5.2L5.33 26.67l5.6-1.47a10.64 10.64 0 0 0 5.08 1.29c5.87 0 10.66-4.78 10.66-10.66s-4.79-10.5-10.66-10.5zm0 19.2c-1.74 0-3.36-.46-4.77-1.28l-.34-.2-3.32.87.89-3.24-.22-.33a8.62 8.62 0 0 1-1.32-4.6c0-4.77 3.89-8.66 8.66-8.66s8.66 3.89 8.66 8.66-3.89 8.66-8.66 8.66z"/>
             </svg>
             WhatsApp
           </button>
@@ -497,17 +511,15 @@ este
         </div>
       </section>
 
-      <!-- barra fija de WhatsApp (siempre visible en el modal) -->
       <div class="whats-fixed">
         <button class="share-btn whatsapp" id="whatsFixed">
           <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path fill="#fff" d="M19.59 17.83c-.29-.15-1.7-.84-1.96-.94-.26-.1-.45-.15-.64.15-.19.29-.74.94-.91 1.13-.17.19-.34.21-.63.08-.29-.15-1.23-.45-2.34-1.44-.86-.75-1.44-1.68-1.61-1.98-.17-.29-.02-.45.13-.6.13-.13.29-.34.45-.51.15-.17.19-.29.29-.49.1-.19.05-.36-.02-.51-.07-.15-.64-1.56-.88-2.13-.23-.56-.47-.48-.64-.48h-.55c-.19 0-.49.07-.75.36-.26.29-1 1-1 2.45 0 1.44 1.02 2.84 1.17 3.04.15.19 2 3.06 4.84 4.29.68.29 1.2.46 1.6.59.67.21 1.27.18 1.75.11.53-.08 1.7-.69 1.94-1.36.24-.67.24-1.25.17-1.36-.07-.11-.26-.18-.55-.33zM16.01 5.33c-5.88 0-10.67 4.78-10.67 10.66 0 1.88.5 3.66 1.38 5.2L5.33 26.67l5.6-1.47a10.64 10.64 0 0 0 5.08 1.29c5.87 0 10.66-4.78 10.66-10.66s-4.79-10.5-10.66-10.5zm0 19.2c-1.74 0-3.36-.46-4.77-1.28l-.34-.2-3.32.87.89-3.24-.22-.33a8.62 8.62 0 0 1-1.32-4.6c0-4.77 3.89-8.66 8.66-8.66s8.66 3.89 8.66 8.66-3.89 8.66-8.66 8.66z"/>
+            <path fill="#fff" d="M19.59 17.83c-.29-.15-1.7-.84-1.96-.94-.26-.1-.45-.15-.64.15-.19.29-.74.94-.91 1.13-.17.19-.34.21-.63.08-.29-.15-1.23-.45-2.34-1.44-.86-.75-1.44-1.68-1.61-1.98-.17-.29-.02-.45.13-.6.13-.13.29-.34.45-.51.15-.17.19-.29.29-.49.1-.19.05-.36-.02-.51-.07-.15-.64-1.56-.88-2.13-.23-.56-.47-.48-.64-.48h-.55c-.19 0 -.49.07-.75.36-.26.29-1 1-1 2.45 0 1.44 1.02 2.84 1.17 3.04.15.19 2 3.06 4.84 4.29.68.29 1.2.46 1.6.59.67.21 1.27.18 1.75.11.53-.08 1.7-.69 1.94-1.36.24-.67.24-1.25.17-1.36-.07-.11-.26-.18-.55-.33zM16.01 5.33c-5.88 0-10.67 4.78-10.67 10.66 0 1.88.5 3.66 1.38 5.2L5.33 26.67l5.6-1.47a10.64 10.64 0 0 0 5.08 1.29c5.87 0 10.66-4.78 10.66-10.66s-4.79-10.5-10.66-10.5zm0 19.2c-1.74 0-3.36-.46-4.77-1.28l-.34-.2-3.32.87.89-3.24-.22-.33a8.62 8.62 0 0 1-1.32-4.6c0-4.77 3.89-8.66 8.66-8.66s8.66 3.89 8.66 8.66-3.89 8.66-8.66 8.66z"/>
           </svg>
           Enviar por WhatsApp
         </button>
       </div>
 
-      <!-- ===== Mini modal de Términos y Condiciones (dentro del dialog) ===== -->
       <div class="terms-modal" id="termsModal" aria-modal="true" role="dialog" aria-labelledby="termsTitle" aria-hidden="true">
         <div class="terms-dialog" role="document">
           <div class="terms-head">
@@ -526,12 +538,20 @@ este
           </div>
         </div>
       </div>
-      <!-- / Mini modal -->
     </div>
   </div>
 
   <!-- Toast -->
   <div class="tnc-toast" id="tncToast">Solo será válido si son novios 💞</div>
+
+  <!-- ===== MODAL AGOTADO (nuevo) ===== -->
+  <div class="soldout-modal" id="soldoutModal" role="dialog" aria-modal="true" aria-labelledby="soldoutTitle" aria-hidden="true">
+    <div class="soldout-card" role="document">
+      <h3 class="soldout-title" id="soldoutTitle">AGOTADO</h3>
+      <p class="soldout-sub">Hasta nuevo aviso 🫶</p>
+      <button class="soldout-btn" id="soldoutOk" type="button">Entendido</button>
+    </div>
+  </div>
 
   <!-- 🎵 sonidos -->
   <audio id="snd-pop" preload="auto" src="sonidos/pop.mp3"></audio>
@@ -577,7 +597,7 @@ este
       const s = document.getElementById('bgSrc');
       const data = videos[themeIdx % videos.length];
       s.src = data.src; v.poster = data.poster;
-      v.load(); v.play().catch(()=>{/* silencio si autoplay bloqueado */});
+      v.load(); v.play().catch(()=>{});
     });
 
     // === Mostrar/ocultar corazones ===
@@ -622,7 +642,26 @@ este
       const termsAccept = document.getElementById('termsAccept');
       const tncToast = document.getElementById('tncToast');
 
+      // ====== SOLD OUT: evitar abrir el cupón y mostrar aviso ======
+      const soldoutModal = document.getElementById('soldoutModal');
+      const soldoutOk = document.getElementById('soldoutOk');
+      const SOLD_OUT = true; // cambia a false cuando quieras habilitar el cupón
+
+      function openSoldout(){
+        soldoutModal.classList.add('is-open');
+        soldoutModal.setAttribute('aria-hidden','false');
+      }
+      function closeSoldout(){
+        soldoutModal.classList.remove('is-open');
+        soldoutModal.setAttribute('aria-hidden','true');
+      }
+      soldoutOk.addEventListener('click', closeSoldout);
+      soldoutModal.addEventListener('click', (e)=>{ if(e.target === soldoutModal) closeSoldout(); });
+      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && soldoutModal.classList.contains('is-open')) closeSoldout(); });
+
       function openModal(){
+        // si está agotado, no abrir el modal del cupón
+        if (SOLD_OUT) { openSoldout(); return; }
         modal.classList.add('is-open');
         document.body.classList.add('cupon-lock');
         modal.setAttribute('aria-hidden','false');
@@ -687,11 +726,12 @@ este
       }
 
       function megaExplosion(){
+        const mega = document.getElementById('megaBurst');
         mega.innerHTML = '';
         mega.classList.add('show');
         const W = window.innerWidth, H = window.innerHeight;
         const cx = W/2, cy = H/2;
-        const mode = nextType(); // 'hearts' | 'confetti' | 'petals'
+        const mode = nextType();
         const COUNT = mode==='confetti' ? 260 : 220;
 
         for(let i=0;i<COUNT;i++){
@@ -730,7 +770,6 @@ este
         }
         setTimeout(()=> mega.classList.remove('show'), 1400);
 
-        // sonido: pop (corazones/confeti) o sakura (pétalos)
         try{
           if(mode==='petals'){ sndSakura.currentTime=0; sndSakura.play(); }
           else{ sndPop.currentTime=0; sndPop.play(); }
@@ -744,7 +783,6 @@ este
         unlockBtn.classList.add('open');
         unlockPanel.style.opacity = '0.65';
         canjearBtn.removeAttribute('disabled');
-        // pequeño feedback sonoro
         try{ sndPop.currentTime=0; sndPop.play(); }catch(_){}
       });
 
@@ -757,23 +795,19 @@ este
         termsModal.classList.remove('is-open');
         termsModal.setAttribute('aria-hidden','true');
       }
-      // Ver términos -> muestra toast "Solo será válido si son novios"
       seeTerms.addEventListener('click', ()=>{
         tncToast.classList.add('show');
         setTimeout(()=> tncToast.classList.remove('show'), 1800);
       });
       termsCancel.addEventListener('click', closeTerms);
 
-      // ===== Canjear -> primero muestra T&C; al aceptar continúa canje =====
+      // ===== Canjear (si algún día lo reactivas) =====
       let pendingCanje = false;
-
       document.getElementById('btn-canjear').addEventListener('click', ()=>{
-        if(!unlocked) return; // seguridad extra
+        if(!unlocked) return;
         pendingCanje = true;
-        openTerms(); // abrir términos antes de avanzar
+        openTerms();
       });
-
-      // Aceptar términos: cerrar modal y continuar con el canje real
       termsAccept.addEventListener('click', ()=>{
         closeTerms();
         if(!pendingCanje) return;
@@ -797,7 +831,6 @@ este
         }, 900);
       });
 
-      // Cerrar términos con click fuera o Escape
       termsModal.addEventListener('click', (e)=>{ if(e.target === termsModal) closeTerms(); });
       document.addEventListener('keydown', (e)=>{
         if(e.key === 'Escape' && termsModal.classList.contains('is-open')) closeTerms();
@@ -812,9 +845,7 @@ Codigo secreto: ${shareCode.value}
 Dame mis makis bb 😘✨
 (porfi)`;
       }
-      // Tu numero (sin el signo +)
       const phone = '51934574931';
-
       function openWhats(){
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(buildText())}`;
         window.open(url, '_blank', 'noopener');
@@ -829,4 +860,3 @@ Dame mis makis bb 😘✨
   </script>
 </body>
 </html>
-
